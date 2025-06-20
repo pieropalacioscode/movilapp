@@ -1,6 +1,6 @@
 <!-- Navbar superior con diseño específico para móvil -->
 <div class="mx-4 mt-4 bg-gradient-to-b from-green-700 to-green-800 px-4 py-3 rounded-lg shadow-lg">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between ">
         <!-- Botón hamburguesa a la izquierda -->
         <button class="p-2 text-white hover:bg-slate-700 rounded transition-colors duration-200"
             (click)="toggleSidebar()">
@@ -30,10 +30,10 @@
 
 <!-- Sidebar -->
 <div [class.translate-x-0]="isOpen" [class.-translate-x-full]="!isOpen"
-    class="fixed top-0 left-0 z-40 w-72 h-full transition-transform duration-300 bg-gradient-to-b from-green-700 to-green-800 text-white shadow-2xl transform rounded-r-3xl">
+    class="fixed top-0 left-0 z-40 w-72 h-screen overflow-y-auto transition-transform duration-300 bg-gradient-to-b from-green-700 to-green-800 text-white shadow-2xl transform rounded-r-3xl flex flex-col">
 
     <!-- Header del sidebar -->
-    <div class="p-6 border-b border-green-500/30 bg-black/10 rounded-tr-3xl">
+    <div class="p-6 border-b border-green-500/30 bg-black/10 rounded-tr-3xl flex-shrink-0">
         <a routerLink="/" class="block">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-green-500 rounded-2xl flex items-center justify-center shadow-lg">
@@ -51,8 +51,8 @@
         </a>
     </div>
 
-    <!-- Navegación -->
-    <nav class="p-6 space-y-3">
+    <!-- Navegación - ahora con flex-1 para ocupar espacio disponible -->
+    <nav class="flex-1 p-6 space-y-3 overflow-y-auto">
         <!-- Inicio -->
         <a routerLink="/home" routerLinkActive="bg-green-500/20 text-green-300"
             class="flex items-center gap-3 p-4 rounded-2xl hover:bg-black/20 transition-all duration-200 group">
@@ -67,7 +67,7 @@
             <span class="font-medium">Inicio</span>
         </a>
 
-        <!-- Pedidos con submenu -->
+        <!-- Pedidos con submenu - altura automática mejorada -->
         <div class="space-y-2">
             <button (click)="mostrarSubmenu = !mostrarSubmenu"
                 class="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-black/20 transition-all duration-200 group">
@@ -88,13 +88,14 @@
                 </svg>
             </button>
 
-            <!-- Submenu con animación -->
-            <div class="overflow-hidden transition-all duration-300" [style.max-height]="mostrarSubmenu ? '200px' : '0'"
+            <!-- Submenu con altura automática para 4 items -->
+            <div class="overflow-hidden transition-all duration-300" [style.max-height]="mostrarSubmenu ? '280px' : '0'"
                 [style.opacity]="mostrarSubmenu ? '1' : '0'">
-                <div class="pl-6 space-y-2 pt-2">
+                <div class="pl-6 space-y-3 pt-2 pb-2">
                     <a [routerLink]="['/realizarPedido']" [ngClass]="{
                         'bg-green-500/20 text-green-300': esRutaActiva(['/realizarPedido', '/realizar-pedido'])
-                        }" class="flex items-center gap-3 p-3 rounded-xl hover:bg-black/15 transition-all duration-200 text-sm group">
+                        }"
+                        class="flex items-center gap-3 p-3 rounded-xl hover:bg-black/15 transition-all duration-200 text-sm group">
                         <div
                             class="w-6 h-6 bg-orange-500/20 rounded-lg flex items-center justify-center group-hover:bg-black/30">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none"
@@ -116,7 +117,7 @@
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <span>En proceso</span>
+                        <span>Iniciado</span>
                     </a>
                     <a routerLink="/pedidos/Recibido" routerLinkActive="bg-green-500/20 text-green-300"
                         class="flex items-center gap-3 p-3 rounded-xl hover:bg-black/15 transition-all duration-200 text-sm group">
@@ -130,11 +131,23 @@
                         </div>
                         <span>Finalizados</span>
                     </a>
+                    <a routerLink="/pedidos/Cancelados" routerLinkActive="bg-green-500/20 text-green-300"
+                        class="flex items-center gap-3 p-3 rounded-xl hover:bg-black/15 transition-all duration-200 text-sm group">
+                        <div
+                            class="w-6 h-6 bg-green-500/20 rounded-lg flex items-center justify-center group-hover:bg-black/30">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-red-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                        <span>Cancelados</span>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Perfil -->
+        <!-- Resto de items del menú -->
         <a routerLink="/perfil" routerLinkActive="bg-green-500/20 text-green-300"
             class="flex items-center gap-3 p-4 rounded-2xl hover:bg-black/20 transition-all duration-200 group">
             <div
@@ -148,7 +161,6 @@
             <span class="font-medium">Perfil</span>
         </a>
 
-        <!-- Ajustes -->
         <a routerLink="/ajustes" routerLinkActive="bg-green-500/20 text-green-300"
             class="flex items-center gap-3 p-4 rounded-2xl hover:bg-black/20 transition-all duration-200 group">
             <div
@@ -164,7 +176,6 @@
             <span class="font-medium">Ajustes</span>
         </a>
 
-        <!-- Alertas -->
         <a routerLinkActive="bg-green-500/20 text-green-300"
             class="flex items-center gap-3 p-4 rounded-2xl hover:bg-black/20 transition-all duration-200 group">
             <div
@@ -178,7 +189,6 @@
             <span class="font-medium">Alertas</span>
         </a>
 
-        <!-- Cerrar Sesion -->
         <a routerLinkActive="bg-green-500/20 text-green-300" (click)="logout()"
             class="flex items-center gap-3 p-4 rounded-2xl hover:bg-black/20 transition-all duration-200 group">
             <div
@@ -193,15 +203,14 @@
         </a>
     </nav>
 
-    <!-- Footer del sidebar -->
-    <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-green-500/30 bg-black/10 rounded-br-3xl">
+    <!-- Footer del sidebar - ahora fijo en la parte inferior -->
+    <div class="flex-shrink-0 p-6 border-t border-green-500/30 bg-black/10 rounded-br-3xl">
         <div class="flex items-center gap-3 text-sm text-green-200">
             <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span>Sistema activo</span>
         </div>
     </div>
 </div>
-
 <!-- Overlay oscuro al abrir -->
 <div *ngIf="isOpen" class="fixed inset-0 bg-opacity-50 z-30 backdrop-blur-sm transition-opacity duration-300"
     (click)="toggleSidebar()"></div>

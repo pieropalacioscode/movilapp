@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './pedidos-component.css'
 })
 export class PedidosComponent implements OnInit {
-
+  estadoFiltro: string = '';
   pedidos: Pedidos[] = [];
   constructor(
     private _pedidoService: PedidosProvedorService,
@@ -21,16 +21,26 @@ export class PedidosComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const estado = params.get('estado');
       if (estado) {
-        this.getPedidos(estado);
+         this.estadoFiltro = estado.toLowerCase(); 
+        this.getPedidos(this.estadoFiltro);
+       
       }
-    });
+    }); 
+    
   }
   getPedidos(estado: string) {
-    this._pedidoService.getPedidos(estado).subscribe({
+    this._pedidoService.getPedidosDetallesEstado(estado).subscribe({
       next: (response) => {
         this.pedidos = response;
       }
     });
   }
-
+getTituloEstado(): string {
+  switch (this.estadoFiltro) {
+    case 'iniciado': return 'en Proceso';
+    case 'recibido': return 'Recibidos';
+    case 'pendiente': return 'Pendientes';
+    default: return '';
+  }
+}
 }

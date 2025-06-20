@@ -1,29 +1,126 @@
-
-<div class="min-h-screen flex flex-col justify-between items-center bg-white px-6 py-10 text-center ">
+<!-- Vista NORMAL (Registrar pedido y botones) -->
+<div *ngIf="!modoHoy" class="min-h-screen flex flex-col justify-between items-center bg-white px-6 py-10 text-center">
   <!-- Encabezado -->
   <div>
-    <h1 class="text-xl font-bold tracking-widest text-gray-800 ">🛒 PEDIDO NUEVO </h1>
+    <h1 class="text-xl font-bold tracking-widest text-gray-800">🛒 PEDIDO NUEVO</h1>
 
-    <!-- Icono (usa tu propio SVG o imagen) -->
+    <!-- Imagen -->
     <div class="flex justify-center mt-6">
-      <img src="https://i.pinimg.com/736x/ff/08/33/ff0833aa2a0500596e6bbf31ef71554b.jpg" class="w-50 h-50 text-yellow-400" />
+      <img src="https://i.pinimg.com/736x/ff/08/33/ff0833aa2a0500596e6bbf31ef71554b.jpg" class="w-50 h-50" />
     </div>
   </div>
 
   <!-- Botones -->
-  <div class=" space-y-4" routerLink="/realizar-pedido">
-    <button class="w-full bg-green-800 text-white py-3 rounded-xl font-semibold tracking-widest">
+  <div class="space-y-4">
+    <button class="w-full bg-green-800 text-white py-3 rounded-xl font-semibold tracking-widest"
+      routerLink="/realizar-pedido">
       🛒 Registrar Pedido
     </button>
-    <button class="w-full bg-blue-900 text-white py-3 rounded-xl font-semibold tracking-widest">
+    <button class="w-full bg-blue-900 text-white py-3 rounded-xl font-semibold tracking-widest"
+      routerLink="/realizar-pedido/hoy">
       🧾 Pedidos de Hoy
     </button>
   </div>
 
-  <!-- Footer texto -->
+  <!-- Footer -->
   <p class="text-xs text-gray-500 mt-10 uppercase tracking-wider">
-    Libreria Saber SA
+    Librería Saber SA
   </p>
 </div>
 
+<div *ngIf="modoHoy" class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-6 space-y-6">
+  <!-- Header mejorado -->
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-800 rounded-2xl mb-4 shadow-lg">
+      <span class="text-2xl">🧾</span>
+    </div>
+    <h1 class="text-2xl font-bold text-blue-800 tracking-wide">Pedidos del Día</h1>
+    <div class="w-16 h-1 bg-blue-800 rounded-full mx-auto mt-2"></div>
+  </div>
 
+  <!-- Contenedor principal del pedido -->
+  <div *ngIf="pedidoHoy; else sinPedido"
+    class="bg-white shadow-xl rounded-3xl overflow-hidden border border-gray-100 transform hover:scale-[1.02] transition-all duration-300">
+
+    <!-- Header del card -->
+    <div class="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-blue-200">
+      <div class="flex justify-between items-start">
+        <div class="flex-1">
+          <div class="flex items-center mb-2">
+            <div class="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+            <p class="text-sm font-semibold text-blue-800">{{ pedidoHoy.proveedor }}</p>
+          </div>
+          <div class="flex items-center text-xs text-blue-600">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            {{ pedidoHoy.fecha | date: 'dd/MM/yyyy HH:mm' }}
+          </div>
+        </div>
+
+        <!-- Estado mejorado -->
+        <div class="ml-4">
+          <div class="relative">
+            <span class="inline-flex items-center text-xs px-4 py-2 rounded-full font-bold tracking-wide shadow-sm" [ngClass]="{
+                'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border border-green-300': pedidoHoy.estado === 'Recibido',
+                'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300': pedidoHoy.estado === 'Iniciado'
+              }">
+              <span class="w-1.5 h-1.5 rounded-full mr-2" [ngClass]="{
+                'bg-green-600': pedidoHoy.estado === 'Recibido',
+                'bg-blue-600': pedidoHoy.estado === 'iniciado'
+              }"></span>
+              {{ pedidoHoy.estado | uppercase }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido del card -->
+    <div class="p-6">
+      <!-- Descripción mejorada -->
+      <div *ngIf="pedidoHoy.descripcionPedido" class="mb-6">
+        <div class="bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-400 p-4 rounded-r-xl">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-yellow-800">Descripción del pedido</p>
+              <p class="text-sm text-yellow-700 mt-1">{{ pedidoHoy.descripcionPedido }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón de acción mejorado -->
+      <div class="flex justify-end">
+        <button [routerLink]="['/detalle', pedidoHoy.id]"
+          class="group relative inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-green-700 to-green-800 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 active:scale-95">
+          <span class="mr-2">Ver Detalles</span>
+          <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado sin pedido mejorado -->
+  <ng-template #sinPedido>
+    <div class="bg-white shadow-lg rounded-3xl p-8 text-center border border-gray-100">
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6">
+        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-700 mb-2">No hay pedidos</h3>
+      <p class="text-gray-500 text-sm">No se han registrado pedidos para el día de hoy.</p>
+      <div class="mt-6">
+        <div class="w-24 h-1 bg-gray-200 rounded-full mx-auto"></div>
+      </div>
+    </div>
+  </ng-template>
+</div>

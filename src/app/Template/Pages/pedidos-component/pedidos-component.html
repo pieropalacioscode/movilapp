@@ -1,32 +1,73 @@
-<div class="px-4 py-6 space-y-4">
-    <h1 class="text-center text-xl font-bold text-green-700 mb-6">📦 Pedidos Realizados</h1>
+<div class="min-h-screen bg-gradient-to-br px-4 py-6">
+    <!-- Header mejorado -->
+    <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4">
+            <span class="text-2xl">📦</span>
+        </div>
+        <h1 class="text-2xl font-bold text-green-800 mb-2">
+            Pedidos Realizados {{ getTituloEstado() }}
+        </h1>
+        <p class="text-green-600 text-sm">Gestiona y revisa tus pedidos</p>
 
-    <div *ngFor="let pedido of pedidos" class="bg-white shadow-md rounded-xl p-4 border border-gray-100">
-        <div class="flex justify-between items-center mb-2">
-            <div class="text-sm text-gray-700">
-                <div><span class="font-semibold">Fecha:</span> {{ pedido.fecha | date: 'dd/MM/yyyy HH:mm' }}</div>
-                <div><span class="font-semibold">Estado:</span>
-                    <span [ngClass]="{
-              'text-green-600 font-bold': pedido.estado === 'completado',
-              'text-yellow-600 font-bold': pedido.estado === 'pendiente',
-              'text-blue-600 font-bold': pedido.estado === 'iniciado'
+    </div>
+
+    <!-- Lista de pedidos con diseño mejorado -->
+    <div class="space-y-4">
+        <div *ngFor="let pedido of pedidos"
+            class="bg-white shadow-lg rounded-2xl p-4 border border-green-100 hover:shadow-xl transition-all duration-300">
+
+            <!-- Contenido del pedido organizado -->
+            <div class="flex justify-between items-center">
+                <!-- Información del pedido - lado izquierdo -->
+                <div class="flex-1">
+                    <!-- Fecha -->
+                    <div class="flex items-center mb-2">
+                        <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h3a2 2 0 012 2v1l-1 5a2 2 0 01-2 2H6a2 2 0 01-2-2l-1-5V9a2 2 0 012-2h3z">
+                            </path>
+                        </svg>
+                        <span class="font-semibold text-gray-700 text-sm">Fecha:</span>
+                        <span class="ml-2 text-gray-600 text-sm">{{ pedido.fecha | date: 'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="font-semibold text-gray-700 text-sm">Estado:</span>
+                        <span class="ml-2" [ngClass]="{
+              'text-green-600 font-bold bg-green-100 px-2 py-1 rounded-full text-xs': pedido.estado === 'Recibido',
+              'text-blue-600 font-bold bg-blue-100 px-2 py-1 rounded-full text-xs': pedido.estado === 'iniciado'
             }">
-                        {{ pedido.estado }}
-                    </span>
+                            {{ pedido.estado }}
+                        </span>
+                    </div>
                 </div>
-            </div>
 
-            <div>
-                <button [routerLink]="['/detalle', pedido.id]"
-                    class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded shadow">
-                    Ver Detalles
-                </button>
+                <!-- Botón más pequeño - lado derecho -->
+                <div class="ml-4">
+                    <button [routerLink]="['/detalle', pedido.id]"
+                        class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                        Ver Detalles
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Si no hay pedidos -->
-    <div *ngIf="pedidos.length === 0" class="text-center text-gray-500 text-sm mt-10">
-        <p>No tienes pedidos registrados aún.</p>
+    <!-- Estado vacío -->
+    <div *ngIf="pedidos.length === 0" class="text-center py-16">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
+            <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2m0 0V6a2 2 0 012-2h2a2 2 0 012 2v1">
+                </path>
+            </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">No hay pedidos aún</h3>
+        <p class="text-gray-500 text-sm">No tienes pedidos registrados aún.</p>
     </div>
 </div>

@@ -33,7 +33,8 @@ import { DetallePedidoComponent } from './Template/Pages/pedidos-component/detal
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgSelectModule
+    NgSelectModule,
+    
     
   ],
   providers: [

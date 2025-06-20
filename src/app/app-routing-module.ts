@@ -22,6 +22,10 @@ const routes: Routes = [
       { path: 'home', component: InicioComponent },
       { path: 'realizarPedido', component: RealizarPedidoComponent },
       { path: 'realizar-pedido', component: RegistrarPedidoComponent },
+      {
+        path: 'realizar-pedido/hoy',
+        component: RealizarPedidoComponent
+      },
       { path: 'detalle/:id', component: DetallePedidoComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
@@ -32,7 +36,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes,{scrollPositionRestoration: 'enabled'})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

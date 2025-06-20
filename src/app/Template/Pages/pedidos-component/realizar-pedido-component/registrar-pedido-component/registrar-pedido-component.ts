@@ -29,7 +29,7 @@ export class RegistrarPedidoComponent implements OnInit {
   });
 
   libroFormMap = new Map<number, FormGroup>();
-
+  
 
   constructor(
     private pedidoService: PedidosProvedorService,
@@ -111,10 +111,12 @@ export class RegistrarPedidoComponent implements OnInit {
       console.log('Detalles:', this.detalles);
       return;
     }
-
+    const fecha = new Date();
     const data = {
       pedido: {
-        fecha: new Date().toISOString(),
+        fecha: new Date(fecha.getTime() - fecha.getTimezoneOffset() * 60000)
+          .toISOString()
+          .slice(0, -1),
         estado: this.pedidoForm.value.estado,
         idProveedor: this.pedidoForm.value.idProveedor,
         descripcionPedido: this.pedidoForm.value.descripcionPedido,

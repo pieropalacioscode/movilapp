@@ -14,19 +14,28 @@ export class PedidosProvedorService {
   private apiurl = this.endpoint + 'PedidoProveedor';
   constructor(private _http: HttpClient) { }
 
-getPedidos(estado: string): Observable<Pedidos[]> {
-  const params = new HttpParams().set('estado', estado);
-  return this._http.get<Pedidos[]>(this.apiurl + '/estado', { params });
-}
+  getPedidos(estado: string): Observable<Pedidos[]> {
+    const params = new HttpParams().set('estado', estado);
+    return this._http.get<Pedidos[]>(this.apiurl + '/estado', { params });
+  }
 
-crearPedido(pedido:PedidoDetalleRequest):Observable<PedidoDetalleRequest>{
-  return this._http.post<PedidoDetalleRequest>(this.apiurl+'/create-with-details',pedido)
-}
+  crearPedido(pedido: PedidoDetalleRequest): Observable<PedidoDetalleRequest> {
+    return this._http.post<PedidoDetalleRequest>(this.apiurl + '/create-with-details', pedido)
+  }
 
-getPedidoDetalle(id:number):Observable<PedidoDetalleLibroResponse>{
-  return this._http.get<PedidoDetalleLibroResponse>(`${this.apiurl}/con-detalles/${id}`)
-}
-  confirmarPedido(payload: ConfirmarRecepcionRequest): Observable<any> {
-    return this._http.put(`${this.apiurl}/confirmar-recepcion`, payload);
+  getPedidoDetalle(id: number): Observable<PedidoDetalleLibroResponse> {
+    return this._http.get<PedidoDetalleLibroResponse>(`${this.apiurl}/con-detalles/${id}`)
+  }
+  confirmarPedidoConImagen(formData: FormData) {
+    return this._http.put(`${this.apiurl}/confirmar-recepcion-con-imagen`, formData);
+  }
+
+  getPedidoPorFecha(fecha: string): Observable<PedidoDetalleLibroResponse> {
+    const params = new HttpParams().set('fecha', fecha);
+    return this._http.get<PedidoDetalleLibroResponse>(`${this.apiurl}/fecha`, { params });
+  }
+  getPedidosDetallesEstado(estado: string): Observable<Pedidos[]> {
+    const params = new HttpParams().set('estado', estado);
+    return this._http.get<Pedidos[]>(this.apiurl + '/Detalles/estado', { params });
   }
 }

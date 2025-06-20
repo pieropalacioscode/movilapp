@@ -20,6 +20,7 @@ export interface PedidoDetalleLibroResponse {
     descripcionPedido: string;
     descripcionRecepcion: string;
     proveedor: string; // 🔄 antes era idProveedor, ahora es string nombre
+    imagen:string;
     detalles: LibroPedidoDetalleDto[]; // 🔄 antes era detallePedidoProveedors
     idProveedor:number;
 }
