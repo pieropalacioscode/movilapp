@@ -1,0 +1,14 @@
+.ng-select .ng-dropdown-panel {
+  background-color: white !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.75rem !important;
+}
+
+.ng-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+  background-color: white !important;
+  color: #374151 !important;
+}
+
+.ng-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option:hover {
+  background-color: #f9fafb !important;
+}

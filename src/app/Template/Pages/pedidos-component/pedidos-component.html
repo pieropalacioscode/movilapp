@@ -1,0 +1,32 @@
+<div class="px-4 py-6 space-y-4">
+    <h1 class="text-center text-xl font-bold text-green-700 mb-6">📦 Pedidos Realizados</h1>
+
+    <div *ngFor="let pedido of pedidos" class="bg-white shadow-md rounded-xl p-4 border border-gray-100">
+        <div class="flex justify-between items-center mb-2">
+            <div class="text-sm text-gray-700">
+                <div><span class="font-semibold">Fecha:</span> {{ pedido.fecha | date: 'dd/MM/yyyy HH:mm' }}</div>
+                <div><span class="font-semibold">Estado:</span>
+                    <span [ngClass]="{
+              'text-green-600 font-bold': pedido.estado === 'completado',
+              'text-yellow-600 font-bold': pedido.estado === 'pendiente',
+              'text-blue-600 font-bold': pedido.estado === 'iniciado'
+            }">
+                        {{ pedido.estado }}
+                    </span>
+                </div>
+            </div>
+
+            <div>
+                <button [routerLink]="['/detalle', pedido.id]"
+                    class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded shadow">
+                    Ver Detalles
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Si no hay pedidos -->
+    <div *ngIf="pedidos.length === 0" class="text-center text-gray-500 text-sm mt-10">
+        <p>No tienes pedidos registrados aún.</p>
+    </div>
+</div>
