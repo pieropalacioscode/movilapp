@@ -1,163 +1,260 @@
-<!-- Pantalla Móvil - Crear Pedido -->
-<div class="min-h-screen bg-gray-50">
-
-    <!-- Header Fijo -->
-    <div class="sticky top-0 bg-white shadow-sm z-10 px-4 py-3">
-        <div class="flex items-center justify-between">
-            <button class="p-2 -ml-2">
-            </button>
-            <h1 class="text-lg font-semibold text-gray-800">Nuevo Pedido</h1>
-            <div class="w-6"></div>
-        </div>
-    </div>
+<!-- Pantalla Móvil - Crear Pedido Mejorada -->
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
 
     <!-- Contenido Principal -->
-    <div class="px-4 py-6 space-y-6 pb-24">
+    <div class="px-4 py-6 space-y-6 pb-28">
 
-        <!-- Información del Usuario/Sesión -->
-        <div class="bg-white rounded-xl shadow-sm p-4">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                            clip-rule="evenodd"></path>
+        <!-- Título de sección elegante (reemplaza tu card verde) -->
+        <div class="mx-4 mt-6 mb-6">
+            <div class="text-center space-y-3">
+                <!-- Icono principal -->
+                <div
+                    class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg mb-2">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
                     </svg>
                 </div>
-                <div>
-                    <p class="font-medium text-gray-800"></p>
-                    <p class="text-sm text-gray-500">Administrador</p>
+
+                <!-- Título principal -->
+                <div class="space-y-2">
+                    <h1
+                        class="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                        Registro de Pedido
+                    </h1>
+                    <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto"></div>
                 </div>
+
+                <!-- Subtítulo -->
+                <p class="text-gray-600 text-sm max-w-sm mx-auto leading-relaxed">
+                    Completa la información necesaria para registrar un nuevo pedido en la App.
+                </p>
             </div>
         </div>
 
         <!-- Formulario de Pedido -->
         <form [formGroup]="pedidoForm" class="space-y-6">
+            <!-- Selección de Proveedor Mejorada -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                <div class="flex items-center gap-3 mb-4">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800">Seleccionar Proveedor</h3>
+                        <p class="text-xs text-gray-500">Campo obligatorio</p>
+                    </div>
+                </div>
 
-            <!-- Selección de Proveedor -->
-            <div class="bg-white rounded-2xl shadow-md p-5 space-y-3 border border-gray-200">
-                <!-- Etiqueta -->
-                <label class="text-sm font-semibold text-gray-800 flex items-center gap-2 mb-1">
-                    <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Proveedor
-                </label>
+                <!-- Selector limpio y simple -->
+                <ng-select [items]="proveedores" bindLabel="razonSocial" bindValue="idProveedor"
+                    placeholder="🔍 Buscar y seleccionar proveedor..." formControlName="idProveedor" [searchable]="true"
+                    [clearable]="false"
+                    class="w-full text-sm border-2 border-gray-200 rounded-xl shadow-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-                <!-- ng-select -->
-                <ng-select [items]="proveedores" bindValue="idProveedor" placeholder="📋 Elige un proveedor"
-                    formControlName="idProveedor" [searchable]="true" [clearable]="true"
-                    class="w-full text-sm border border-gray-300 rounded-xl shadow-inner bg-white focus:outline-none focus:ring-2 focus:ring-green-500">
-
-                    <!-- Selección actual -->
-                    <ng-template ng-label-tmp let-item="item">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M4 3h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z" />
-                            </svg>
-                            <div class="flex flex-col leading-tight">
-                                <span class="text-gray-800 font-medium text-sm">{{ item.razonSocial }}</span>
-                                <span class="text-gray-400 text-xs">Proveedor seleccionado</span>
-                            </div>
-                        </div>
-                    </ng-template>
-
-                    <!-- Opciones del dropdown -->
+                    <!-- Template simple para las opciones -->
                     <ng-template ng-option-tmp let-item="item">
-                        <div class="flex items-center gap-2 py-2 px-1 hover:bg-green-50 rounded-lg transition-all">
-                            <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M4 3h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z" />
-                            </svg>
-                            <span class="text-gray-700 font-medium text-sm">{{ item.razonSocial }}</span>
+                        <div class="flex items-center gap-3 py-1">
+                            <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 3h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z" />
+                                </svg>
+                            </div>
+                            <span class="text-gray-700 font-medium">{{ item.razonSocial }}</span>
                         </div>
                     </ng-template>
                 </ng-select>
 
-                <!-- Nota obligatoria -->
-                <p class="text-xs text-gray-500 mt-1 italic flex items-start gap-1 leading-snug">
-                    <svg class="w-3 h-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Este campo es obligatorio para registrar un pedido.
-                </p>
+                <!-- Proveedor seleccionado - Diseño súper atractivo -->
+                <div *ngIf="pedidoForm.get('idProveedor')?.value" class="mt-5">
+                    <div
+                        class="relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-5 shadow-xl">
+                        <!-- Patrón de fondo decorativo -->
+                        <div class="absolute inset-0 opacity-10">
+                            <div
+                                class="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -translate-y-16 translate-x-16">
+                            </div>
+                            <div
+                                class="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full translate-y-12 -translate-x-12">
+                            </div>
+                        </div>
+
+                        <div class="relative flex items-center gap-4">
+                            <!-- Icono principal -->
+                            <div
+                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+
+                            <!-- Información del proveedor -->
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-white/80 text-sm font-medium">Proveedor Seleccionado</span>
+                                    <div class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+                                </div>
+                                <h4 class="text-white font-bold text-lg leading-tight">{{
+                                    getProveedorSeleccionado()?.razonSocial }}</h4>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <span
+                                        class="bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm">
+                                        ✓ Confirmado
+                                    </span>
+                                    <span class="text-white/70 text-xs">Listo para continuar</span>
+                                </div>
+                            </div>
+
+                            <!-- Botón para cambiar -->
+                            <button (click)="limpiarProveedor()"
+                                class="p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl transition-all duration-200 transform hover:scale-105">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Línea decorativa inferior -->
+                        <div
+                            class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-300 via-emerald-300 to-green-300">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensaje cuando NO hay selección - Más atractivo -->
+                <div *ngIf="!pedidoForm.get('idProveedor')?.value" class="mt-5">
+                    <div
+                        class="relative overflow-hidden bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-5 border-2 border-dashed border-amber-200">
+                        <!-- Patrón de fondo -->
+                        <div class="absolute inset-0 opacity-5">
+                            <div
+                                class="absolute top-0 right-0 w-20 h-20 bg-amber-400 rounded-full -translate-y-10 translate-x-10">
+                            </div>
+                            <div
+                                class="absolute bottom-0 left-0 w-16 h-16 bg-orange-400 rounded-full translate-y-8 -translate-x-8">
+                            </div>
+                        </div>
+
+                        <div class="relative flex items-center gap-4">
+                            <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center shadow-md">
+                                <svg class="w-6 h-6 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-amber-800 mb-1">¡Selecciona un proveedor!</h4>
+                                <p class="text-sm text-amber-700 leading-relaxed">
+                                    Necesitas elegir un proveedor para poder continuar con el registro del pedido.
+                                </p>
+                            </div>
+                            <div
+                                class="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center animate-bounce">
+                                <span class="text-amber-600 text-lg">👆</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-
-            <!-- Descripción del Pedido -->
-            <div class="bg-white rounded-xl shadow-sm p-4">
-                <label class="block text-sm font-medium text-gray-700 mb-3">
-                    <span class="flex items-center">
-                        <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Descripción del Pedido Mejorada -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                <div class="flex items-center gap-3 mb-4">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                             </path>
                         </svg>
-                        Descripción del Pedido
-                    </span>
-                </label>
-                <textarea formControlName="descripcionPedido" rows="3"
-                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="Describe brevemente el pedido..."></textarea>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800">Descripción del Pedido</h3>
+                        <p class="text-xs text-gray-500">Opcional</p>
+                    </div>
+                </div>
+
+                <textarea formControlName="descripcionPedido" rows="4"
+                    class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-800 resize-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                    placeholder="Describe brevemente el pedido, observaciones especiales, etc..."></textarea>
             </div>
         </form>
 
-        <!-- Información Automática -->
-        <div class="space-y-3">
-            <div class="bg-gray-100 rounded-xl p-4">
-                <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Información Automática Mejorada -->
+        <div class="grid grid-cols-1 gap-4">
+            <div class="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-r from-orange-400 to-orange-500 rounded-xl flex items-center justify-center shadow-md">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                             </path>
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <p class="font-medium text-gray-800 text-sm">Fecha y Hora</p>
-                        <p class="text-gray-600 text-sm mt-1">{{ fechaActual | date:'medium' }}</p>
+                        <h4 class="font-semibold text-gray-800">Fecha y Hora</h4>
+                        <p class="text-gray-600 text-sm">{{ fechaActual | date:'medium' }}</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs text-green-600 font-medium">Automático</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-gray-100 rounded-xl p-4">
-                <div class="flex items-start space-x-3">
+            <div class="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
+                <div class="flex items-center gap-4">
                     <div
-                        class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg class="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                clip-rule="evenodd"></path>
+                        class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <p class="font-medium text-gray-800 text-sm">Estado del Pedido</p>
-                        <p class="text-gray-600 text-sm mt-1">Iniciado</p>
+                        <h4 class="font-semibold text-gray-800">Estado del Pedido</h4>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">Iniciado</span>
+                            <span class="text-xs text-gray-500">Por defecto</span>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <p class="text-xs text-gray-400 italic px-2">
-                * La fecha y estado son asignados automáticamente por la APP.
-            </p>
         </div>
 
-        <!-- Búsqueda de Libros -->
-        <div class="bg-white rounded-xl shadow-sm p-4">
-            <label class="block text-sm font-medium text-gray-700 mb-3">
-                <span class="flex items-center">
-                    <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Búsqueda de Libros Mejorada -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center gap-3 mb-4">
+                <div
+                    class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    Buscar Libro
-                </span>
-            </label>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-800">Buscar Libros</h3>
+                    <p class="text-xs text-gray-500">Encuentra y agrega libros al pedido</p>
+                </div>
+            </div>
+
             <div class="relative">
                 <input type="text" [formControl]="busquedaControl"
-                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 pr-10 text-gray-800 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 pr-12 text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
                     placeholder="Ej: agenda, coquito, matemáticas..." />
-                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -166,36 +263,58 @@
             </div>
         </div>
 
-        <!-- Resultados de Búsqueda -->
+        <!-- Resultados de Búsqueda Mejorados -->
         <div class="space-y-4" *ngIf="librosFiltrados.length > 0">
-            <h3 class="text-sm font-medium text-gray-700 px-2">
-                📚 Resultados ({{ librosFiltrados.length }})
-            </h3>
+            <div class="flex items-center justify-between px-2">
+                <h3 class="font-semibold text-gray-800 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                        </path>
+                    </svg>
+                    Resultados Encontrados
+                </h3>
+                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+                    {{ librosFiltrados.length }}
+                </span>
+            </div>
 
-            <div *ngFor="let libro of librosFiltrados" class="bg-white rounded-xl shadow-sm overflow-hidden">
-                <div class="p-4 border-b border-gray-100">
-                    <h4 class="font-semibold text-gray-800 text-sm leading-tight">{{ libro.titulo }}</h4>
-                    <p class="text-xs text-gray-500 mt-1" *ngIf="libro.autor">{{ libro.autor }}</p>
+            <div *ngFor="let libro of librosFiltrados"
+                class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                <div class="p-5 bg-gradient-to-r from-gray-50 to-white">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-800 leading-tight">{{ libro.titulo }}</h4>
+                            <p class="text-sm text-gray-500 mt-1" *ngIf="libro.autor">Por: {{ libro.autor }}</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div [formGroup]="getFormGroup(libro.id)" class="p-4 bg-gray-50">
-                    <div class="grid grid-cols-2 gap-3">
+                <div [formGroup]="getFormGroup(libro.id)" class="p-5 bg-white">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">Cantidad</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Cantidad</label>
                             <input type="number" formControlName="cantidad"
-                                class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                                 placeholder="0" min="1" />
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">Precio S/</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Precio S/</label>
                             <input type="number" formControlName="precio"
-                                class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                                 placeholder="0.00" step="0.01" />
                         </div>
                     </div>
 
                     <button (click)="agregarLibro(libro)"
-                        class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-medium text-sm transition-colors flex items-center justify-center">
+                        class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3 rounded-xl font-semibold text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -206,43 +325,54 @@
             </div>
         </div>
 
-        <!-- Mensaje cuando no hay resultados -->
+        <!-- Mensaje cuando no hay resultados Mejorado -->
         <div *ngIf="busquedaControl.value && librosFiltrados.length === 0"
-            class="bg-white rounded-xl shadow-sm p-6 text-center">
-            <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                </path>
-            </svg>
-            <p class="text-gray-500 text-sm">No se encontraron libros</p>
-            <p class="text-gray-400 text-xs mt-1">Intenta con otro término de búsqueda</p>
+            class="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-100">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+            </div>
+            <h3 class="font-semibold text-gray-700 mb-2">No se encontraron libros</h3>
+            <p class="text-gray-500 text-sm">Intenta con otro término de búsqueda o verifica la ortografía</p>
         </div>
 
-        <!-- Resumen de Libros Agregados -->
-        <div *ngIf="detalles.length > 0" class="bg-white rounded-xl shadow-sm p-4">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-semibold text-gray-800 text-sm flex items-center">
-                    <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    Libros Agregados
-                </h3>
-                <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
+        <!-- Resumen de Libros Agregados Mejorado -->
+        <div *ngIf="detalles.length > 0" class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">Libros en el Pedido</h3>
+                </div>
+                <span class="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1.5 rounded-full">
                     {{ detalles.length }}
                 </span>
             </div>
 
             <div class="space-y-3">
                 <div *ngFor="let item of detalles; let i = index"
-                    class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    class="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-100">
                     <div class="flex-1">
-                        <p class="font-medium text-gray-800 text-sm">Titulo de Libro : {{ item.titulo }}</p>
-                        <div class="flex items-center space-x-4 mt-1">
-                            <span class="text-xs text-gray-600">Cant: {{ item.cantidadPedida }}</span>
-                            <span class="text-xs text-gray-600">S/ {{ item.precioUnitario }}</span>
+                        <p class="font-semibold text-gray-800 text-sm mb-1">{{ item.titulo }}</p>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                                Cant: {{ item.cantidadPedida }}
+                            </span>
+                            <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full font-semibold">
+                                S/ {{ item.precioUnitario }}
+                            </span>
                         </div>
                     </div>
-                    <button (click)="removerLibro(i)" class="p-1 text-red-500 hover:bg-red-50 rounded-full">
+                    <button (click)="removerLibro(i)"
+                        class="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors ml-3">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -251,24 +381,28 @@
                 </div>
             </div>
 
-            <!-- Total -->
-            <div class="mt-4 pt-4 border-t border-gray-200">
-                <div class="flex justify-between items-center">
-                    <span class="font-medium text-gray-700">Total Estimado:</span>
-                    <span class="font-bold text-lg text-green-600"></span>
+            <!-- Total Mejorado -->
+            <div class="mt-5 pt-5 border-t border-gray-200">
+                <div
+                    class="flex justify-between items-center p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-xl">
+                    <span class="font-semibold text-gray-700">Total Estimado:</span>
+                    <span class="font-bold text-xl text-green-600">S/ 0.00</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Botón Flotante Fijo -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
+    <!-- Botón Flotante Fijo Mejorado -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 p-4 shadow-2xl">
         <button (click)="crearPedido()" [disabled]="!pedidoForm.valid || detalles.length === 0"
-            class="w-full bg-green-700 hover:bg-green-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white py-4 rounded-2xl font-bold text-base transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex items-center justify-center">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            Registrar Pedido ({{ detalles.length }} {{ detalles.length === 1 ? 'libro' : 'libros' }})
+            <span>Registrar Pedido</span>
+            <span class="ml-2 bg-white/20 px-2 py-1 rounded-full text-sm">
+                {{ detalles.length }} {{ detalles.length === 1 ? 'libro' : 'libros' }}
+            </span>
         </button>
     </div>
 

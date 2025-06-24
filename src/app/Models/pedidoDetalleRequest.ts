@@ -28,7 +28,7 @@ export interface PedidoDetalleLibroResponse {
 export interface LibroPedidoDetalleDto {
     id:number;
     idLibro: number;
-    titulo: string;
+    titulo?: string;
     isbn: string;
     imagen: string;
     cantidadPedida: number;
@@ -49,6 +49,12 @@ export interface ConfirmarRecepcionRequest {
     cantidadRecibida: number;
     precioUnitario: number;
   }[];
+}
+
+export interface ContadorEstadoResponse{
+  totalIniciados:number,
+  totalRecibidos:number,
+  totalCancelados:number
 }
 
 

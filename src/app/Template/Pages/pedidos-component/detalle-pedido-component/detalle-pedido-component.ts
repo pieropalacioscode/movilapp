@@ -4,6 +4,8 @@ import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmarRecepcionRequest, PedidoDetalleLibroResponse } from '../../../../Models/pedidoDetalleRequest';
 import { AlertService } from '../../../../Service/alert-service';
+import { Dialog } from '@capacitor/dialog';
+
 
 @Component({
   selector: 'app-detalle-pedido-component',
@@ -26,7 +28,7 @@ export class DetallePedidoComponent implements OnInit {
     private pedidoService: PedidosProvedorService,
     private fb: FormBuilder,
     private alert: AlertService
-  ) {}
+  ) { }
 
   get detalles(): FormArray {
     return this.pedidoForm.get('detalles') as FormArray;
@@ -93,7 +95,7 @@ export class DetallePedidoComponent implements OnInit {
       this.detalles.controls.every(d => d.get('cantidadRecibida')?.value >= 0);
   }
 
-  enviarConfirmacion() {
+  enviarConfirmacion(estado: 'Recibido' | 'Cancelado' = 'Recibido') {
     const idPedido = this.pedidoForm.get('id')?.value;
     const idSucursal = 1;
     const descripcionRecepcion = this.pedidoForm.get('descripcionRecepcion')?.value;
@@ -111,26 +113,43 @@ export class DetallePedidoComponent implements OnInit {
     formData.append('idPedido', idPedido.toString());
     formData.append('idSucursal', idSucursal.toString());
     formData.append('descripcionRecepcion', descripcionRecepcion);
+    formData.append('estado', estado); // 👈 importante
     formData.append('detallesJson', JSON.stringify(detalles));
 
-    // Adjuntar imágenes reales seleccionadas
-    this.imagenesSeleccionadas.forEach(file => {
-      formData.append('imagenes', file);
-    });
+    const input = document.getElementById('inputImagenes') as HTMLInputElement;
+    if (input && input.files) {
+      Array.from(input.files).forEach(file => {
+        formData.append('imagenes', file);
+      });
+    }
 
     this.pedidoService.confirmarPedidoConImagen(formData).subscribe({
       next: () => {
-        this.alert.success('📦 Pedido confirmado correctamente con imagen');
+        const mensaje = estado === 'Cancelado' ? '🚫 Pedido cancelado correctamente' : '📦 Pedido confirmado correctamente';
+        this.alert.success(mensaje);
         this.modoConfirmacion = false;
         this.getPedidoDetalle(idPedido);
-        this.imagenesPreview = [];
-        this.imagenesSeleccionadas = [];
       },
       error: () => {
-        this.alert.error('❌ Error al confirmar el pedido con imagen');
+        this.alert.error('❌ Error al procesar el pedido');
       }
     });
   }
+
+async confirmarCancelacion() {
+  const { value } = await Dialog.confirm({
+    title: '¿Cancelar Pedido?',
+    message: '¿Estás seguro de que deseas cancelar este pedido?',
+    okButtonTitle: 'Sí, cancelar',
+    cancelButtonTitle: 'No'
+  });
+
+  if (value) {
+    this.enviarConfirmacion('Cancelado');
+  }
+}
+
+
 
   // 📷 Previsualizar imágenes seleccionadas
   onSeleccionImagenes(event: Event): void {

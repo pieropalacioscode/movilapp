@@ -8,6 +8,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { RealizarPedidoComponent } from './Template/Pages/pedidos-component/realizar-pedido-component/realizar-pedido-component';
 import { RegistrarPedidoComponent } from './Template/Pages/pedidos-component/realizar-pedido-component/registrar-pedido-component/registrar-pedido-component';
 import { DetallePedidoComponent } from './Template/Pages/pedidos-component/detalle-pedido-component/detalle-pedido-component';
+import { InventarioComponent } from './Template/Pages/inventario-component/inventario-component';
 
 
 const routes: Routes = [
@@ -27,6 +28,7 @@ const routes: Routes = [
         component: RealizarPedidoComponent
       },
       { path: 'detalle/:id', component: DetallePedidoComponent },
+      { path: 'inventario', component: InventarioComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },
@@ -36,7 +38,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes,{scrollPositionRestoration: 'enabled'})],
+  imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

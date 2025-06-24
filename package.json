@@ -19,6 +19,7 @@
     "@capacitor/android": "^7.4.0",
     "@capacitor/cli": "^7.4.0",
     "@capacitor/core": "^7.4.0",
+    "@capacitor/dialog": "^7.0.1",
     "@capacitor/toast": "^7.0.1",
     "@ng-select/ng-select": "^15.1.2",
     "@ngxpert/hot-toast": "^5.0.1",

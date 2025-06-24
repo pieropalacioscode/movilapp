@@ -14,6 +14,7 @@ import { RealizarPedidoComponent } from './Template/Pages/pedidos-component/real
 import { RegistrarPedidoComponent } from './Template/Pages/pedidos-component/realizar-pedido-component/registrar-pedido-component/registrar-pedido-component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DetallePedidoComponent } from './Template/Pages/pedidos-component/detalle-pedido-component/detalle-pedido-component';
+import { InventarioComponent } from './Template/Pages/inventario-component/inventario-component';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { DetallePedidoComponent } from './Template/Pages/pedidos-component/detal
     RealizarPedidoComponent,
     RegistrarPedidoComponent,
     DetallePedidoComponent,
+    InventarioComponent,
 
   ],
   imports: [

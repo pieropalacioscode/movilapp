@@ -142,4 +142,18 @@ export class RegistrarPedidoComponent implements OnInit {
   removerLibro(index: number) {
     this.detalles.splice(index, 1);
   }
+
+
+  getProveedorSeleccionado() {
+  const idSeleccionado = this.pedidoForm.get('idProveedor')?.value;
+  return this.proveedores.find(p => p.idProveedor === idSeleccionado);
+}
+
+limpiarProveedor() {
+  this.pedidoForm.get('idProveedor')?.setValue(null);
+}
+
+seleccionarProveedor(proveedor: any) {
+  this.pedidoForm.get('idProveedor')?.setValue(proveedor.idProveedor);
+}
 }

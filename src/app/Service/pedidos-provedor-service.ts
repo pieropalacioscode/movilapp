@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import { Pedidos } from '../Models/pedidos';
 import { environment } from '../../environments/environment';
 import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
-import { ConfirmarRecepcionRequest, PedidoDetalleLibroResponse, PedidoDetalleRequest } from '../Models/pedidoDetalleRequest';
+import { ConfirmarRecepcionRequest, ContadorEstadoResponse, PedidoDetalleLibroResponse, PedidoDetalleRequest } from '../Models/pedidoDetalleRequest';
+import { PaginacionResponse } from '../Models/PaginacionResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -30,12 +31,26 @@ export class PedidosProvedorService {
     return this._http.put(`${this.apiurl}/confirmar-recepcion-con-imagen`, formData);
   }
 
-  getPedidoPorFecha(fecha: string): Observable<PedidoDetalleLibroResponse> {
-    const params = new HttpParams().set('fecha', fecha);
-    return this._http.get<PedidoDetalleLibroResponse>(`${this.apiurl}/fecha`, { params });
+  getPedidoPorFecha(fecha: string, pagina: number, cantidad: number): Observable<PaginacionResponse<PedidoDetalleLibroResponse>> {
+    const params = new HttpParams()
+      .set('fecha', fecha)
+      .set('pagina', pagina.toString())
+      .set('cantidad', cantidad.toString());
+
+    return this._http.get<PaginacionResponse<PedidoDetalleLibroResponse>>(`${this.apiurl}/fecha`, { params });
   }
-  getPedidosDetallesEstado(estado: string): Observable<Pedidos[]> {
-    const params = new HttpParams().set('estado', estado);
-    return this._http.get<Pedidos[]>(this.apiurl + '/Detalles/estado', { params });
+
+  getPedidosDetallesEstado(estado: string, pagina: number, cantidad: number): Observable<PaginacionResponse<PedidoDetalleLibroResponse>> {
+    const params = new HttpParams()
+      .set('estado', estado)
+      .set('pagina', pagina.toString())
+      .set('cantidad', cantidad.toString());
+
+    return this._http.get<PaginacionResponse<PedidoDetalleLibroResponse>>(`${this.apiurl}/Detalles/estado`, { params });
   }
+
+  getContEstado():Observable<ContadorEstadoResponse>{
+    return this._http.get<ContadorEstadoResponse>(`${this.apiurl}/contador`);
+  }
+
 }

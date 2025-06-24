@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { PedidosProvedorService } from '../../../Service/pedidos-provedor-service';
+import { ContadorEstadoResponse } from '../../../Models/pedidoDetalleRequest';
 
 @Component({
   selector: 'app-inicio-component',
@@ -6,6 +8,22 @@ import { Component } from '@angular/core';
   templateUrl: './inicio-component.html',
   styleUrl: './inicio-component.css'
 })
-export class InicioComponent {
+export class InicioComponent implements OnInit {
 
+  contador?: ContadorEstadoResponse;
+
+  constructor(private pedidosService: PedidosProvedorService
+  ) { }
+
+  ngOnInit(): void {
+    this.getContadorEstado();
+  }
+
+  getContadorEstado() {
+    this.pedidosService.getContEstado().subscribe({
+      next: (response) => {
+        this.contador=response;
+      }
+    })
+  }
 }
