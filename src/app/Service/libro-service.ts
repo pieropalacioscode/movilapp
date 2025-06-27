@@ -9,13 +9,13 @@ import { PaginacionResponse } from '../Models/PaginacionResponse';
   providedIn: 'root'
 })
 export class LibroService {
-  private endpoint = 'https://localhost:7143/';
+  private endpoint = 'http://192.168.1.8:5229/';
   private apiurl = this.endpoint + 'Libro';
   constructor(private _http: HttpClient) { }
 
 
   buscarPorTitulo(titulo: string): Observable<any[]> {
-    return this._http.get<any[]>(`https://localhost:7143/Libro/filtroComplete?titulo=${titulo}`);
+    return this._http.get<any[]>(`http://192.168.1.8:5229/Libro/filtroComplete?titulo=${titulo}`);
   }
 
   getInventario(pagina: number, cantidad: number): Observable<PaginacionResponse<Inventario>> {

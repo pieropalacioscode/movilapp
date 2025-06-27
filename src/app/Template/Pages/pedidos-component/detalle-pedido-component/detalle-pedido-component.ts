@@ -99,7 +99,7 @@ export class DetallePedidoComponent implements OnInit {
     const idPedido = this.pedidoForm.get('id')?.value;
     const idSucursal = 1;
     const descripcionRecepcion = this.pedidoForm.get('descripcionRecepcion')?.value;
-
+    debugger
     const detalles = this.detalles.controls.map(d => ({
       id: d.get('id')?.value,
       idPedidoProveedor: idPedido,
@@ -118,7 +118,7 @@ export class DetallePedidoComponent implements OnInit {
 
     const input = document.getElementById('inputImagenes') as HTMLInputElement;
     if (input && input.files) {
-      Array.from(input.files).forEach(file => {
+      this.imagenesSeleccionadas.forEach(file => {
         formData.append('imagenes', file);
       });
     }
@@ -129,6 +129,8 @@ export class DetallePedidoComponent implements OnInit {
         this.alert.success(mensaje);
         this.modoConfirmacion = false;
         this.getPedidoDetalle(idPedido);
+        console.log(this.imagenesSeleccionadas);
+
       },
       error: () => {
         this.alert.error('❌ Error al procesar el pedido');
@@ -136,37 +138,19 @@ export class DetallePedidoComponent implements OnInit {
     });
   }
 
-async confirmarCancelacion() {
-  const { value } = await Dialog.confirm({
-    title: '¿Cancelar Pedido?',
-    message: '¿Estás seguro de que deseas cancelar este pedido?',
-    okButtonTitle: 'Sí, cancelar',
-    cancelButtonTitle: 'No'
-  });
+  async confirmarCancelacion() {
+    const { value } = await Dialog.confirm({
+      title: '¿Cancelar Pedido?',
+      message: '¿Estás seguro de que deseas cancelar este pedido?',
+      okButtonTitle: 'Sí, cancelar',
+      cancelButtonTitle: 'No'
+    });
 
-  if (value) {
-    this.enviarConfirmacion('Cancelado');
-  }
-}
-
-
-
-  // 📷 Previsualizar imágenes seleccionadas
-  onSeleccionImagenes(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files) return;
-
-    this.imagenesSeleccionadas = Array.from(input.files);
-    this.imagenesPreview = [];
-
-    for (const file of this.imagenesSeleccionadas) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagenesPreview.push(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (value) {
+      this.enviarConfirmacion('Cancelado');
     }
   }
+
 
   // 🔍 Ampliar imagen al hacer clic
   abrirImagen(url: string) {
@@ -181,5 +165,27 @@ async confirmarCancelacion() {
   removerImagen(index: number) {
     this.imagenesPreview.splice(index, 1);
     this.imagenesSeleccionadas.splice(index, 1);
+  }
+
+
+
+  onSeleccionImagenes(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) return;
+
+    const nuevosArchivos = Array.from(input.files);
+
+    nuevosArchivos.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagenesPreview.push(reader.result as string);
+        this.imagenesSeleccionadas.push(file);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Limpiar el input para que se puedan volver a seleccionar los mismos archivos si se desea
+    input.value = '';
   }
 }
