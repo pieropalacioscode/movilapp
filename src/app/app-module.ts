@@ -23,6 +23,7 @@ import { ToastNotificacion } from './Template/notificacion-component/toast-notif
 import { CommonModule } from '@angular/common';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Router } from '@angular/router';
+import { ClienteRegisterComponent } from './Template/Cliente/cliente-register-component/cliente-register-component';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { Router } from '@angular/router';
     InventarioComponent,
     ThemeToggle,
     NotificacionComponent,
-    ToastNotificacion
+    ToastNotificacion,
+    ClienteRegisterComponent
 
   ],
   imports: [

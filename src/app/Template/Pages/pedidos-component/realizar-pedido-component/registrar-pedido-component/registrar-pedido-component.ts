@@ -1,11 +1,13 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { PedidosProvedorService } from '../../../../../Service/pedidos-provedor-service';
 import { AlertService } from '../../../../../Service/alert-service';
 import { LibroService } from '../../../../../Service/libro-service';
 import { ProveedorService } from '../../../../../Service/proveedor-service';
+import { PersonaService } from '../../../../../Service/persona-service';
+import { Persona } from '../../../../../Models/persona';
 
 
 @Component({
@@ -21,7 +23,10 @@ export class RegistrarPedidoComponent implements OnInit {
   detalles: any[] = [];
   proveedores: any[] = [];
   fechaActual = new Date();
-
+  formBuscar: FormGroup;
+  personaEncontrada?: Persona;
+  mostrarFormularioCliente = false;
+  tipoDocumentoSeleccionado: string = '';
   pedidoForm: FormGroup = new FormGroup({
     idProveedor: new FormControl(null, Validators.required),
     estado: new FormControl('iniciado', Validators.required),
@@ -29,14 +34,21 @@ export class RegistrarPedidoComponent implements OnInit {
   });
 
   libroFormMap = new Map<number, FormGroup>();
-  
+
 
   constructor(
+    private fb: FormBuilder,
     private pedidoService: PedidosProvedorService,
     private alert: AlertService,
     private libroService: LibroService,
-    private proveedorService: ProveedorService
-  ) { }
+    private proveedorService: ProveedorService,
+    private personaService: PersonaService,
+  ) {
+    this.formBuscar = this.fb.group({
+      tipoDocumento: ['DNI', Validators.required], // ✅ Agregado aquí
+      numeroDocumento: ['', [Validators.required, Validators.minLength(8)]]
+    });
+  }
 
   ngOnInit() {
     this.proveedorService.getProveedores().subscribe(data => {
@@ -107,13 +119,18 @@ export class RegistrarPedidoComponent implements OnInit {
   crearPedido() {
     if (this.pedidoForm.invalid || this.detalles.length === 0) {
       this.alert.warning('Completa los datos del pedido y al menos un libro');
-      console.log('Form Value:', this.pedidoForm.value);
-      console.log('Detalles:', this.detalles);
       return;
     }
+
+    if (!this.personaEncontrada || !this.personaEncontrada.idPersona) {
+      this.alert.warning('Debe asignar un cliente al pedido.');
+      return;
+    }
+
     const fecha = new Date();
     const data = {
       pedido: {
+        idPersona: this.personaEncontrada.idPersona, // ✅ Aquí va dentro de "pedido"
         fecha: new Date(fecha.getTime() - fecha.getTimezoneOffset() * 60000)
           .toISOString()
           .slice(0, -1),
@@ -127,17 +144,23 @@ export class RegistrarPedidoComponent implements OnInit {
 
     this.pedidoService.crearPedido(data).subscribe({
       next: res => {
+        console.log('Persona encontrada:', this.personaEncontrada);
         this.alert.success('Pedido enviado correctamente');
         this.pedidoForm.reset();
         this.detalles = [];
         this.librosFiltrados = [];
+        this.personaEncontrada = undefined;
+        console.log(data);
+        
       },
       error: err => {
         this.alert.error('Error al registrar el pedido');
         console.error(err);
+        console.log(data);
       }
     });
   }
+
 
   removerLibro(index: number) {
     this.detalles.splice(index, 1);
@@ -145,15 +168,48 @@ export class RegistrarPedidoComponent implements OnInit {
 
 
   getProveedorSeleccionado() {
-  const idSeleccionado = this.pedidoForm.get('idProveedor')?.value;
-  return this.proveedores.find(p => p.idProveedor === idSeleccionado);
-}
+    const idSeleccionado = this.pedidoForm.get('idProveedor')?.value;
+    return this.proveedores.find(p => p.idProveedor === idSeleccionado);
+  }
 
-limpiarProveedor() {
-  this.pedidoForm.get('idProveedor')?.setValue(null);
-}
+  limpiarProveedor() {
+    this.pedidoForm.get('idProveedor')?.setValue(null);
+  }
 
-seleccionarProveedor(proveedor: any) {
-  this.pedidoForm.get('idProveedor')?.setValue(proveedor.idProveedor);
-}
+  seleccionarProveedor(proveedor: any) {
+    this.pedidoForm.get('idProveedor')?.setValue(proveedor.idProveedor);
+  }
+  numeroDocumentoSeleccionado: string = '';
+
+  //Cliente
+  buscarCliente() {
+    const tipo = this.formBuscar.get('tipoDocumento')?.value;
+    const nro = this.formBuscar.get('numeroDocumento')?.value;
+
+    this.tipoDocumentoSeleccionado = tipo;
+    this.numeroDocumentoSeleccionado = nro;
+
+    this.personaService.buscarPorDni(tipo, nro).subscribe((resp: Persona) => {
+      if (resp.idPersona && resp.idPersona !== 0) {
+        // ✅ Persona REAL registrada en BD
+        this.personaEncontrada = resp;
+        this.mostrarFormularioCliente = false;
+      } else if (resp.nombre) {
+        // ✅ Persona viene desde RENIEC (sin idPersona)
+        this.personaEncontrada = undefined; // No lo tratamos como cliente
+        this.alert.warning("Persona no encontrada, creará un nuevo registro.", 'short');
+        this.mostrarFormularioCliente = true;
+      } else {
+        // ❌ Documento no válido o error en consulta
+        this.alert.error("No se encontraron datos para el número ingresado.", 'short');
+      }
+    });
+  }
+
+
+
+  recibirPersonaGuardada(persona: Persona) {
+    this.personaEncontrada = persona;
+    this.mostrarFormularioCliente = false;
+  }
 }

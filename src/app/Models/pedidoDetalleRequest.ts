@@ -8,7 +8,6 @@ export interface PedidoDetalleRequest {
         cantidadPedida: number;
         cantidadRecibida: number;
         precioUnitario: number;
-
     }[];
 }
 

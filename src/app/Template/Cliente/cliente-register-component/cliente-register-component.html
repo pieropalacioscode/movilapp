@@ -1,0 +1,93 @@
+<div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 transition-colors duration-300 mt-4">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Registrar Nuevo Cliente</h3>
+            <p class="text-xs text-gray-500">Complete los datos del cliente</p>
+        </div>
+    </div>
+
+    <form [formGroup]="formCliente" (ngSubmit)="guardarCliente()" class="space-y-4">
+        
+        <!-- Información del documento (solo lectura) -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Tipo de Documento</label>
+                <input formControlName="tipoDocumento" 
+                    class="w-full bg-gray-100 border-2 border-gray-200 text-gray-600 p-3 rounded-xl cursor-not-allowed" 
+                    readonly />
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Número de Documento</label>
+                <input formControlName="numeroDocumento" 
+                    class="w-full bg-gray-100 border-2 border-gray-200 text-gray-600 p-3 rounded-xl cursor-not-allowed" 
+                    readonly />
+            </div>
+        </div>
+
+        <!-- Información personal -->
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Nombre <span class="text-red-500">*</span>
+                </label>
+                <input formControlName="nombre" placeholder="Ingrese el nombre" 
+                    class="w-full bg-gray-50 border-2 border-gray-200 text-gray-800 placeholder-gray-500 p-3 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Apellido Paterno <span class="text-red-500">*</span>
+                    </label>
+                    <input formControlName="apellidoPaterno" placeholder="Apellido paterno" 
+                        class="w-full bg-gray-50 border-2 border-gray-200 text-gray-800 placeholder-gray-500 p-3 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Apellido Materno</label>
+                    <input formControlName="apellidoMaterno" placeholder="Apellido materno" 
+                        class="w-full bg-gray-50 border-2 border-gray-200 text-gray-800 placeholder-gray-500 p-3 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Teléfono</label>
+                    <input formControlName="telefono" placeholder="Número de teléfono" 
+                        class="w-full bg-gray-50 border-2 border-gray-200 text-gray-800 placeholder-gray-500 p-3 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Correo Electrónico</label>
+                    <input formControlName="correo" placeholder="correo@ejemplo.com" type="email"
+                        class="w-full bg-gray-50 border-2 border-gray-200 text-gray-800 placeholder-gray-500 p-3 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="flex gap-3 pt-4">
+            
+            <button type="submit" [disabled]="formCliente.invalid" 
+                class="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Guardar Cliente
+            </button>
+        </div>
+
+        <!-- Mensaje de campos requeridos -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-3">
+            <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-sm text-blue-700 font-medium">Los campos marcados con <span class="text-red-500">*</span> son obligatorios</span>
+            </div>
+        </div>
+    </form>
+</div>

@@ -5,4 +5,5 @@ export interface Pedidos {
     idProveedor?: number;
     descripcionPedido?: string;
     descripcionRecepcion?: string;
+    idPersona?: number;
 }
