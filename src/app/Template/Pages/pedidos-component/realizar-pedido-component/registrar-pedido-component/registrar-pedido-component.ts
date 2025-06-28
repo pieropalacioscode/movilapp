@@ -144,13 +144,11 @@ export class RegistrarPedidoComponent implements OnInit {
         this.detalles = [];
         this.librosFiltrados = [];
         this.personaEncontrada = undefined;
-        console.log(data);
-        
+        this.formBuscar.get('numeroDocumento')?.setValue('');
       },
       error: err => {
         this.alert.error('Error al registrar el pedido');
         console.error(err);
-        console.log(data);
       }
     });
   }
@@ -200,7 +198,9 @@ export class RegistrarPedidoComponent implements OnInit {
     });
   }
 
-
+  limpiarBusqueda() {
+    this.busquedaControl.setValue('');
+  }
 
   recibirPersonaGuardada(persona: Persona) {
     this.personaEncontrada = persona;
