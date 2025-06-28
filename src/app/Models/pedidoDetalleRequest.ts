@@ -22,6 +22,8 @@ export interface PedidoDetalleLibroResponse {
     imagen:string;
     detalles: LibroPedidoDetalleDto[]; // 🔄 antes era detallePedidoProveedors
     idProveedor:number;
+    idPersona?:number;
+    nombreCliente? : string
 }
 
 export interface LibroPedidoDetalleDto {
@@ -40,6 +42,7 @@ export interface ConfirmarRecepcionRequest {
   idPedido: number;
   idSucursal: number;
   descripcionRecepcion: string;
+  idPersona?:number;
   detalles: {
     id: number;
     idPedidoProveedor: number;

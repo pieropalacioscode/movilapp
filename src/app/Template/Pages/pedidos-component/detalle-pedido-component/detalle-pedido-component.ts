@@ -45,6 +45,8 @@ export class DetallePedidoComponent implements OnInit {
       descripcionPedido: new FormControl<string | null>(null),
       descripcionRecepcion: new FormControl('', { nonNullable: true }),
       imagen: new FormControl<string | null>(null),
+      idPersona:new FormControl<number | null>(null),
+      nombreCliente:new FormControl<string | null>(null),
       detalles: this.fb.array([])
     });
 
@@ -63,7 +65,9 @@ export class DetallePedidoComponent implements OnInit {
           estado: pedido.estado,
           descripcionPedido: pedido.descripcionPedido,
           descripcionRecepcion: pedido.descripcionRecepcion,
-          imagen: pedido.imagen
+          imagen: pedido.imagen,
+          idPersona:pedido.idPersona,
+          nombreCliente:pedido.nombreCliente
         });
 
         if (pedido.detalles?.length) {
@@ -99,7 +103,6 @@ export class DetallePedidoComponent implements OnInit {
     const idPedido = this.pedidoForm.get('id')?.value;
     const idSucursal = 1;
     const descripcionRecepcion = this.pedidoForm.get('descripcionRecepcion')?.value;
-    debugger
     const detalles = this.detalles.controls.map(d => ({
       id: d.get('id')?.value,
       idPedidoProveedor: idPedido,
@@ -129,8 +132,6 @@ export class DetallePedidoComponent implements OnInit {
         this.alert.success(mensaje);
         this.modoConfirmacion = false;
         this.getPedidoDetalle(idPedido);
-        console.log(this.imagenesSeleccionadas);
-
       },
       error: () => {
         this.alert.error('❌ Error al procesar el pedido');
