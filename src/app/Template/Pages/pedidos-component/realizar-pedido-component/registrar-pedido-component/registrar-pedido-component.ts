@@ -121,16 +121,10 @@ export class RegistrarPedidoComponent implements OnInit {
       this.alert.warning('Completa los datos del pedido y al menos un libro');
       return;
     }
-
-    if (!this.personaEncontrada || !this.personaEncontrada.idPersona) {
-      this.alert.warning('Debe asignar un cliente al pedido.');
-      return;
-    }
-
     const fecha = new Date();
     const data = {
       pedido: {
-        idPersona: this.personaEncontrada.idPersona, // ✅ Aquí va dentro de "pedido"
+        idPersona: this.personaEncontrada?.idPersona, // ✅ Aquí va dentro de "pedido"
         fecha: new Date(fecha.getTime() - fecha.getTimezoneOffset() * 60000)
           .toISOString()
           .slice(0, -1),
