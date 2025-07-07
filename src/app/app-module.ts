@@ -1,6 +1,7 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { AuthComponent } from './Template/Pages/auth-component/auth-component';
@@ -24,6 +25,8 @@ import { CommonModule } from '@angular/common';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Router } from '@angular/router';
 import { ClienteRegisterComponent } from './Template/Cliente/cliente-register-component/cliente-register-component';
+import { ReportesComponent } from './Template/reportes-component/reportes-component';
+
 
 
 @NgModule({
@@ -40,7 +43,9 @@ import { ClienteRegisterComponent } from './Template/Cliente/cliente-register-co
     ThemeToggle,
     NotificacionComponent,
     ToastNotificacion,
-    ClienteRegisterComponent
+    ClienteRegisterComponent,
+    ReportesComponent,
+
 
   ],
   imports: [
@@ -51,7 +56,7 @@ import { ClienteRegisterComponent } from './Template/Cliente/cliente-register-co
     NgSelectModule,
     BrowserAnimationsModule,
     CommonModule
-    
+
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -59,9 +64,13 @@ import { ClienteRegisterComponent } from './Template/Cliente/cliente-register-co
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
+    },
+    {
+      provide: LOCALE_ID,
+      useValue: 'es-PE'
     }
   ],
   bootstrap: [App],
-   schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }

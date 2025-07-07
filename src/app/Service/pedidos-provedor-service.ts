@@ -49,8 +49,17 @@ export class PedidosProvedorService {
     return this._http.get<PaginacionResponse<PedidoDetalleLibroResponse>>(`${this.apiurl}/Detalles/estado`, { params });
   }
 
-  getContEstado():Observable<ContadorEstadoResponse>{
+  getContEstado(): Observable<ContadorEstadoResponse> {
     return this._http.get<ContadorEstadoResponse>(`${this.apiurl}/contador`);
+  }
+
+  generarPdfPedidosDelDia(fecha: string, idProveedor: number): Observable<Blob> {
+    const url = `${this.apiurl}/pdf-dia-fecha?fecha=${fecha}&idProveedor=${idProveedor}`;
+    return this._http.get(url, { responseType: 'blob' });
+  }
+
+  obtenerProveedores(): Observable<any[]> {
+    return this._http.get<any[]>(`http://localhost:5229/Proveedor`);
   }
 
 }

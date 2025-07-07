@@ -9,6 +9,7 @@ import { RealizarPedidoComponent } from './Template/Pages/pedidos-component/real
 import { RegistrarPedidoComponent } from './Template/Pages/pedidos-component/realizar-pedido-component/registrar-pedido-component/registrar-pedido-component';
 import { DetallePedidoComponent } from './Template/Pages/pedidos-component/detalle-pedido-component/detalle-pedido-component';
 import { InventarioComponent } from './Template/Pages/inventario-component/inventario-component';
+import { ReportesComponent } from './Template/reportes-component/reportes-component';
 
 
 const routes: Routes = [
@@ -29,6 +30,7 @@ const routes: Routes = [
       },
       { path: 'detalle/:id', component: DetallePedidoComponent },
       { path: 'inventario', component: InventarioComponent },
+      { path: 'reportes', component: ReportesComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },

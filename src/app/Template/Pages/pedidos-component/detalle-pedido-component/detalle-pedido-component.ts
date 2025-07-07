@@ -116,7 +116,7 @@ export class DetallePedidoComponent implements OnInit {
     formData.append('idPedido', idPedido.toString());
     formData.append('idSucursal', idSucursal.toString());
     formData.append('descripcionRecepcion', descripcionRecepcion);
-    formData.append('estado', estado); // 👈 importante
+    formData.append('estado', estado); 
     formData.append('detallesJson', JSON.stringify(detalles));
 
     const input = document.getElementById('inputImagenes') as HTMLInputElement;
