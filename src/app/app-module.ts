@@ -26,9 +26,10 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { Router } from '@angular/router';
 import { ClienteRegisterComponent } from './Template/Cliente/cliente-register-component/cliente-register-component';
 import { ReportesComponent } from './Template/reportes-component/reportes-component';
+import localeEsPE from '@angular/common/locales/es-PE';
+import { ProveedorComponent } from './Template/proveedor-component/proveedor-component';
 
-
-
+registerLocaleData(localeEsPE);
 @NgModule({
   declarations: [
     App,
@@ -45,6 +46,7 @@ import { ReportesComponent } from './Template/reportes-component/reportes-compon
     ToastNotificacion,
     ClienteRegisterComponent,
     ReportesComponent,
+    ProveedorComponent,
 
 
   ],
@@ -73,4 +75,6 @@ import { ReportesComponent } from './Template/reportes-component/reportes-compon
   bootstrap: [App],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class AppModule { }
+export class AppModule { 
+  
+}

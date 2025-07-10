@@ -35,6 +35,7 @@ export interface LibroPedidoDetalleDto {
     cantidadPedida: number;
     cantidadRecibida: number | null;
     precioUnitario: number;
+    lote?:string;
 }
 
 

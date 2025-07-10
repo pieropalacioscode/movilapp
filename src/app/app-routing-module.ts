@@ -10,6 +10,7 @@ import { RegistrarPedidoComponent } from './Template/Pages/pedidos-component/rea
 import { DetallePedidoComponent } from './Template/Pages/pedidos-component/detalle-pedido-component/detalle-pedido-component';
 import { InventarioComponent } from './Template/Pages/inventario-component/inventario-component';
 import { ReportesComponent } from './Template/reportes-component/reportes-component';
+import { ProveedorComponent } from './Template/proveedor-component/proveedor-component';
 
 
 const routes: Routes = [
@@ -31,6 +32,7 @@ const routes: Routes = [
       { path: 'detalle/:id', component: DetallePedidoComponent },
       { path: 'inventario', component: InventarioComponent },
       { path: 'reportes', component: ReportesComponent },
+      { path: 'proveedor', component: ProveedorComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },

@@ -45,8 +45,9 @@ export class DetallePedidoComponent implements OnInit {
       descripcionPedido: new FormControl<string | null>(null),
       descripcionRecepcion: new FormControl('', { nonNullable: true }),
       imagen: new FormControl<string | null>(null),
-      idPersona:new FormControl<number | null>(null),
-      nombreCliente:new FormControl<string | null>(null),
+      idPersona: new FormControl<number | null>(null),
+      nombreCliente: new FormControl<string | null>(null),
+      lote: new FormControl<string | null>(null),
       detalles: this.fb.array([])
     });
 
@@ -66,8 +67,9 @@ export class DetallePedidoComponent implements OnInit {
           descripcionPedido: pedido.descripcionPedido,
           descripcionRecepcion: pedido.descripcionRecepcion,
           imagen: pedido.imagen,
-          idPersona:pedido.idPersona,
-          nombreCliente:pedido.nombreCliente
+          idPersona: pedido.idPersona,
+          nombreCliente: pedido.nombreCliente,
+          lote: pedido.detalles?.[0]?.lote ?? null
         });
 
         if (pedido.detalles?.length) {
@@ -80,7 +82,7 @@ export class DetallePedidoComponent implements OnInit {
               imagen: d.imagen,
               cantidadPedida: d.cantidadPedida,
               cantidadRecibida: d.cantidadRecibida,
-              precioUnitario: d.precioUnitario
+              precioUnitario: d.precioUnitario,
             })
           );
           this.pedidoForm.setControl('detalles', this.fb.array(detallesForm));
@@ -116,7 +118,7 @@ export class DetallePedidoComponent implements OnInit {
     formData.append('idPedido', idPedido.toString());
     formData.append('idSucursal', idSucursal.toString());
     formData.append('descripcionRecepcion', descripcionRecepcion);
-    formData.append('estado', estado); 
+    formData.append('estado', estado);
     formData.append('detallesJson', JSON.stringify(detalles));
 
     const input = document.getElementById('inputImagenes') as HTMLInputElement;
@@ -189,4 +191,15 @@ export class DetallePedidoComponent implements OnInit {
     // Limpiar el input para que se puedan volver a seleccionar los mismos archivos si se desea
     input.value = '';
   }
+
+  rellenarCantidadesRecibidas() {
+    const detallesFormArray = this.pedidoForm.get('detalles') as FormArray;
+
+    detallesFormArray.controls.forEach(control => {
+      const grupo = control as FormGroup;
+      const cantidadPedida = grupo.get('cantidadPedida')?.value;
+      grupo.get('cantidadRecibida')?.setValue(cantidadPedida);
+    });
+  }
+
 }

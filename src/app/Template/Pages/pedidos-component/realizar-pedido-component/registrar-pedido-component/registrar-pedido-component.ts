@@ -27,6 +27,12 @@ export class RegistrarPedidoComponent implements OnInit {
   personaEncontrada?: Persona;
   mostrarFormularioCliente = false;
   tipoDocumentoSeleccionado: string = '';
+  mostrarModuloCliente: boolean = false;
+    // SOLO AGREGAR ESTAS 3 NUEVAS VARIABLES:
+  mostrarLibrosProveedor: boolean = false;
+  filtroProveedorControl = new FormControl('');
+  librosFiltradosProveedor: any[] = [];
+
   pedidoForm: FormGroup = new FormGroup({
     idProveedor: new FormControl(null, Validators.required),
     estado: new FormControl('iniciado', Validators.required),
@@ -66,6 +72,54 @@ export class RegistrarPedidoComponent implements OnInit {
           this.librosFiltrados = [];
         }
       });
+    this.pedidoForm.get('idProveedor')?.valueChanges
+      .pipe(distinctUntilChanged())
+      .subscribe(idProveedor => {
+        if (idProveedor) {
+          this.obetenerlibrosProveedor(1, idProveedor, this.cantidadPorPagina);
+        } else {
+          this.librosFiltrados = [];
+        }
+      });
+          this.filtroProveedorControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe(filtro => {
+        this.filtrarLibrosProveedor(filtro || '');
+      });
+  }
+  paginaActual: number = 1;
+  cantidadPorPagina: number = 10;
+  totalPaginas: number = 0;
+  totalPedidos: number = 0;
+  idProveedorSeleccionado?: number;
+  total:number =0;
+
+  obetenerlibrosProveedor(pagina: number, idProveedor: number, cantidad: number) {
+    this.idProveedorSeleccionado = idProveedor;
+
+    this.libroService.getLibroProveedor(pagina, idProveedor, cantidad).subscribe({
+      next: (response) => {
+        this.librosFiltrados = response.items;
+        this.paginaActual = response.paginaActual;
+        this.totalPaginas = response.totalPaginas;
+        this.librosFiltradosProveedor = response.items;
+        this.total=response.total;
+        this.libroFormMap.clear(); // Limpiar formularios anteriores si se desea
+        this.librosFiltrados.forEach(libro => this.crearFormularioLibro(libro));
+      },
+      error: err => {
+        console.error('Error al obtener libros por proveedor', err);
+        this.librosFiltrados = [];
+        this.librosFiltradosProveedor = [];
+      }
+    });
+  }
+
+
+  quitarCliente() {
+    this.personaEncontrada = undefined;
+    this.formBuscar.get('numeroDocumento')?.setValue('');
+    this.mostrarFormularioCliente = false;
   }
 
   getFormGroup(libroId: number): FormGroup {
@@ -166,6 +220,9 @@ export class RegistrarPedidoComponent implements OnInit {
 
   limpiarProveedor() {
     this.pedidoForm.get('idProveedor')?.setValue(null);
+    this.mostrarLibrosProveedor = false;
+    this.filtroProveedorControl.setValue('');
+    this.librosFiltradosProveedor = [];
   }
 
   seleccionarProveedor(proveedor: any) {
@@ -205,5 +262,68 @@ export class RegistrarPedidoComponent implements OnInit {
   recibirPersonaGuardada(persona: Persona) {
     this.personaEncontrada = persona;
     this.mostrarFormularioCliente = false;
+  }
+
+  cambiarPagina(nuevaPagina: number) {
+    if (nuevaPagina < 1 || nuevaPagina > this.totalPaginas) return;
+    this.paginaActual = nuevaPagina;
+    const idProveedor = this.pedidoForm.get('idProveedor')?.value;
+    if (idProveedor) {
+      this.obetenerlibrosProveedor(this.paginaActual, idProveedor, this.cantidadPorPagina);
+    } // o getPedidos(), según el contexto
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // opcional
+  }
+  // ✅ Utilidad para Math.abs en el template
+  abs(value: number): number {
+    return Math.abs(value);
+  }
+
+
+  getPaginasVisibles(): number[] {
+    const total = this.totalPaginas;
+    const actual = this.paginaActual;
+
+    if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
+
+    const paginas: number[] = [];
+
+    if (actual > 2) paginas.push(1);         // siempre mostrar la primera
+
+    if (actual > 3) paginas.push(-1);        // -1 representará "..."
+
+    const inicio = Math.max(2, actual - 1);
+    const fin = Math.min(total - 1, actual + 1);
+
+    for (let i = inicio; i <= fin; i++) {
+      paginas.push(i);
+    }
+
+    if (actual < total - 2) paginas.push(-1); // "..." al final
+
+    if (actual < total) paginas.push(total); // última página
+
+    return paginas;
+  }
+
+  // SOLO AGREGAR ESTOS 3 NUEVOS MÉTODOS:
+  toggleLibrosProveedor() {
+    this.mostrarLibrosProveedor = !this.mostrarLibrosProveedor;
+  }
+
+  filtrarLibrosProveedor(filtro: string) {
+    if (!filtro || filtro.trim() === '') {
+      this.librosFiltradosProveedor = [...this.librosFiltrados];
+    } else {
+      const filtroLower = filtro.toLowerCase().trim();
+      this.librosFiltradosProveedor = this.librosFiltrados.filter(libro =>
+        libro.titulo?.toLowerCase().includes(filtroLower) ||
+        libro.autor?.toLowerCase().includes(filtroLower) ||
+        libro.isbn?.toLowerCase().includes(filtroLower)
+      );
+    }
+  }
+
+  limpiarFiltroProveedor() {
+    this.filtroProveedorControl.setValue('');
   }
 }

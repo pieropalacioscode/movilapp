@@ -62,4 +62,13 @@ export class PedidosProvedorService {
     return this._http.get<any[]>(`http://localhost:5229/Proveedor`);
   }
 
+  generarLinkPdf(fecha: string, idProveedor: number): Observable<{ url: string }> {
+
+    const params = new HttpParams()
+      .set('fecha', fecha)
+      .set('idProveedor', idProveedor.toString());
+
+    return this._http.get<{ url: string }>(`${this.apiurl}/pdf-link-firebase`, { params });
+  }
+
 }

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inventario } from '../Models/inventario';
 import { PaginacionResponse } from '../Models/PaginacionResponse';
+import { Libro } from '../Models/libro';
 
 @Injectable({
   providedIn: 'root'
@@ -32,4 +33,10 @@ export class LibroService {
     });
   }
 
+  getLibroProveedor(pagina: number,idProveedor:number,cantidad: number):Observable<PaginacionResponse<Libro>>{
+     const params = new HttpParams()
+      .set('pagina', pagina.toString())
+      .set('cantidad', cantidad.toString());
+    return this._http.get<PaginacionResponse<Libro>>(`${this.apiurl}/proveedor/${idProveedor}`,{params})
+  }
 }
