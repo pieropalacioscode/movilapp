@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { PedidosProvedorService } from '../../../../Service/pedidos-provedor-service';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -16,7 +16,7 @@ import { Dialog } from '@capacitor/dialog';
 export class DetallePedidoComponent implements OnInit {
   pedidoForm!: FormGroup;
   modoConfirmacion = false;
-
+  @ViewChild('inputImagenes') inputImagenes!: ElementRef<HTMLInputElement>;
   imagenesRecepcion: string[] = [];            // Imagenes ya guardadas (de Firebase)
   imagenesPreview: string[] = [];              // Base64 para previsualizar nuevas
   imagenesSeleccionadas: File[] = [];          // Archivos reales para enviar
@@ -121,9 +121,10 @@ export class DetallePedidoComponent implements OnInit {
     formData.append('estado', estado);
     formData.append('detallesJson', JSON.stringify(detalles));
 
-    const input = document.getElementById('inputImagenes') as HTMLInputElement;
-    if (input && input.files) {
-      this.imagenesSeleccionadas.forEach(file => {
+    if (this.inputImagenes?.nativeElement?.files) {
+      const files = this.inputImagenes.nativeElement.files as FileList;
+
+      Array.from(files).forEach(file => {
         formData.append('imagenes', file);
       });
     }
@@ -172,25 +173,30 @@ export class DetallePedidoComponent implements OnInit {
 
 
 
+
   onSeleccionImagenes(event: Event): void {
     const input = event.target as HTMLInputElement;
 
-    if (!input.files || input.files.length === 0) return;
+    if (input.files && input.files.length > 0) {
+      // Convertir el FileList a un array
+      const nuevosArchivos = Array.from(input.files);
 
-    const nuevosArchivos = Array.from(input.files);
+      // Agregar solo los archivos que no estén repetidos
+      nuevosArchivos.forEach((nuevo) => {
+        const yaExiste = this.imagenesSeleccionadas.some(
+          img => img.name === nuevo.name && img.size === nuevo.size
+        );
+        if (!yaExiste) {
+          this.imagenesSeleccionadas.push(nuevo);
+          this.imagenesPreview.push(URL.createObjectURL(nuevo));
+        }
+      });
 
-    nuevosArchivos.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagenesPreview.push(reader.result as string);
-        this.imagenesSeleccionadas.push(file);
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Limpiar el input para que se puedan volver a seleccionar los mismos archivos si se desea
-    input.value = '';
+      // Resetear input para permitir seleccionar el mismo archivo otra vez
+      this.inputImagenes.nativeElement.value = '';
+    }
   }
+
 
   rellenarCantidadesRecibidas() {
     const detallesFormArray = this.pedidoForm.get('detalles') as FormArray;
