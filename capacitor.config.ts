@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'saber-movil',
   webDir: 'dist/libmovil/browser',
    server: {
-    androidScheme: 'https',
+    androidScheme: 'http',
     allowNavigation: [
       'http://192.168.1.8:5229/*',
       'https://192.168.1.8:5229/*'

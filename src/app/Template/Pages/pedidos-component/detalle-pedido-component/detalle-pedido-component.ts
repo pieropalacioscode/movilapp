@@ -2,10 +2,10 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { PedidosProvedorService } from '../../../../Service/pedidos-provedor-service';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ConfirmarRecepcionRequest, PedidoDetalleLibroResponse } from '../../../../Models/pedidoDetalleRequest';
+import { PedidoDetalleLibroResponse } from '../../../../Models/pedidoDetalleRequest';
 import { AlertService } from '../../../../Service/alert-service';
 import { Dialog } from '@capacitor/dialog';
-
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Component({
   selector: 'app-detalle-pedido-component',
@@ -16,7 +16,6 @@ import { Dialog } from '@capacitor/dialog';
 export class DetallePedidoComponent implements OnInit {
   pedidoForm!: FormGroup;
   modoConfirmacion = false;
-  @ViewChild('inputImagenes') inputImagenes!: ElementRef<HTMLInputElement>;
   imagenesRecepcion: string[] = [];            // Imagenes ya guardadas (de Firebase)
   imagenesPreview: string[] = [];              // Base64 para previsualizar nuevas
   imagenesSeleccionadas: File[] = [];          // Archivos reales para enviar
@@ -97,50 +96,112 @@ export class DetallePedidoComponent implements OnInit {
   }
 
   get confirmacionValida() {
-    return this.pedidoForm.get('descripcionRecepcion')?.value?.trim().length > 0 &&
-      this.detalles.controls.every(d => d.get('cantidadRecibida')?.value >= 0);
+    return this.pedidoForm.get('descripcionRecepcion')?.valid && this.detalles.valid;
   }
+  async takePhoto() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera,
+        webUseInput: true // Important for web
+      });
+
+      if (image.dataUrl) {
+        this.imagenesPreview.push(image.dataUrl);
+        // Convert dataUrl to File object for sending
+        const blob = this.dataURLtoBlob(image.dataUrl);
+        const file = new File([blob], `photo_${Date.now()}.jpeg`, { type: 'image/jpeg' });
+        this.imagenesSeleccionadas.push(file);
+      }
+    } catch (e) {
+      console.error('Error al tomar foto:', e);
+      this.alert.error('no se pudo tomar los permisos necesarios');
+    }
+  }
+
+  private dataURLtoBlob(dataurl: string) {
+    const arr = dataurl.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : 'image/png';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  }
+
 
   enviarConfirmacion(estado: 'Recibido' | 'Cancelado' = 'Recibido') {
     const idPedido = this.pedidoForm.get('id')?.value;
     const idSucursal = 1;
     const descripcionRecepcion = this.pedidoForm.get('descripcionRecepcion')?.value;
-    const detalles = this.detalles.controls.map(d => ({
-      id: d.get('id')?.value,
-      idPedidoProveedor: idPedido,
-      idLibro: d.get('idLibro')?.value,
-      cantidadPedida: d.get('cantidadPedida')?.value,
-      cantidadRecibida: d.get('cantidadRecibida')?.value,
-      precioUnitario: d.get('precioUnitario')?.value
-    }));
 
-    const formData = new FormData();
-    formData.append('idPedido', idPedido.toString());
-    formData.append('idSucursal', idSucursal.toString());
-    formData.append('descripcionRecepcion', descripcionRecepcion);
-    formData.append('estado', estado);
-    formData.append('detallesJson', JSON.stringify(detalles));
-
-    if (this.inputImagenes?.nativeElement?.files) {
-      const files = this.inputImagenes.nativeElement.files as FileList;
-
-      Array.from(files).forEach(file => {
-        formData.append('imagenes', file);
-      });
+    if (!idPedido || !descripcionRecepcion?.trim()) {
+      this.alert.error('❌ Faltan datos requeridos');
+      return;
     }
 
-    this.pedidoService.confirmarPedidoConImagen(formData).subscribe({
-      next: () => {
-        const mensaje = estado === 'Cancelado' ? '🚫 Pedido cancelado correctamente' : '📦 Pedido confirmado correctamente';
-        this.alert.success(mensaje);
-        this.modoConfirmacion = false;
-        this.getPedidoDetalle(idPedido);
-      },
-      error: () => {
-        this.alert.error('❌ Error al procesar el pedido');
-      }
+    const detalles = this.detalles.controls.map(d => ({
+      id: d.get('id')?.value || 0,
+      idPedidoProveedor: idPedido,
+      idLibro: d.get('idLibro')?.value || 0,
+      cantidadPedida: d.get('cantidadPedida')?.value || 0,
+      cantidadRecibida: d.get('cantidadRecibida')?.value || 0,
+      precioUnitario: d.get('precioUnitario')?.value || 0
+    }));
+
+    // Leer imágenes como base64 (async)
+    const promesasImagenes = this.imagenesSeleccionadas.map(file => {
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = (reader.result as string).split(',')[1]; // solo la parte base64
+          resolve(base64);
+        };
+        reader.onerror = () => reject('Error al leer imagen');
+        reader.readAsDataURL(file);
+      });
     });
+
+    // Esperar a que se conviertan todas las imágenes
+    Promise.all(promesasImagenes)
+      .then(imagenesBase64 => {
+        const payload = {
+          idPedido: idPedido,
+          idSucursal: idSucursal,
+          descripcionRecepcion: descripcionRecepcion.trim(),
+          detalles: detalles,
+          imagenesBase64: imagenesBase64,
+          estado: estado
+        };
+
+        console.log('=== Payload JSON final ===');
+        console.log(payload);
+
+        // Enviar como JSON
+        this.pedidoService.confirmarPedidoJson(payload).subscribe({
+          next: (data) => {
+            console.log('✅ Respuesta exitosa:', data);
+            this.alert.success('📦 Pedido confirmado correctamente');
+            this.getPedidoDetalle(idPedido);
+            this.modoConfirmacion = false;
+          },
+          error: (err) => {
+            console.error('❌ Error completo:', JSON.stringify(err, null, 2));
+            this.alert.error('❌ Error al confirmar pedido');
+          }
+        });
+      })
+      .catch(error => {
+        console.error('❌ Error al convertir imágenes:', error);
+        this.alert.error('❌ No se pudo convertir las imágenes');
+      });
   }
+
 
   async confirmarCancelacion() {
     const { value } = await Dialog.confirm({
@@ -174,26 +235,16 @@ export class DetallePedidoComponent implements OnInit {
 
 
 
-  onSeleccionImagenes(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files.length > 0) {
-      // Convertir el FileList a un array
-      const nuevosArchivos = Array.from(input.files);
-
-      // Agregar solo los archivos que no estén repetidos
-      nuevosArchivos.forEach((nuevo) => {
-        const yaExiste = this.imagenesSeleccionadas.some(
-          img => img.name === nuevo.name && img.size === nuevo.size
-        );
-        if (!yaExiste) {
-          this.imagenesSeleccionadas.push(nuevo);
-          this.imagenesPreview.push(URL.createObjectURL(nuevo));
-        }
-      });
-
-      // Resetear input para permitir seleccionar el mismo archivo otra vez
-      this.inputImagenes.nativeElement.value = '';
+  onSeleccionImagenes(event: any) {
+    if (event.target.files) {
+      for (const file of event.target.files) {
+        this.imagenesSeleccionadas.push(file);
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imagenesPreview.push(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   }
 

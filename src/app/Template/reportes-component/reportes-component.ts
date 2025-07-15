@@ -4,6 +4,9 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { AlertService } from '../../Service/alert-service';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+import { Filesystem, Directory, Encoding, WriteFileResult } from '@capacitor/filesystem';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+
 interface DiaCalendario {
   numero: number;
   fecha: Date;
@@ -19,10 +22,11 @@ interface DiaCalendario {
   styleUrl: './reportes-component.css'
 })
 export class ReportesComponent implements OnInit {
-  
+
   form: FormGroup;
   constructor(private fb: FormBuilder, private pedidoService: PedidosProvedorService,
-    private alerts: AlertService
+    private alerts: AlertService,
+    private fileOpener: FileOpener
   ) {
     registerLocaleData(localeEs);
     this.form = this.fb.group({
@@ -223,65 +227,67 @@ export class ReportesComponent implements OnInit {
 
     return clases;
   }
-// Método para azul
-getClaseDiaAzul(dia: DiaCalendario): string {
-  let clases = 'w-10 h-10 text-sm rounded-xl transition-all duration-200 font-medium ';
-  
-  if (!dia.esDelMes) {
-    clases += 'text-gray-300 cursor-not-allowed ';
-  } else if (dia.estaSeleccionado) {
-    clases += 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold shadow-lg transform scale-110 ';
-  } else if (dia.esHoy) {
-    clases += 'bg-blue-100 text-blue-600 font-bold border-2 border-blue-300 shadow-sm ';
-  } else {
-    clases += 'text-gray-700 hover:bg-blue-100 hover:text-blue-700 hover:shadow-sm active:scale-95 ';
-  }
-  
-  return clases;
-}
+  // Método para azul
+  getClaseDiaAzul(dia: DiaCalendario): string {
+    let clases = 'w-10 h-10 text-sm rounded-xl transition-all duration-200 font-medium ';
 
-getClaseDiaTeal(dia: DiaCalendario): string {
-  let clases = 'w-10 h-10 text-sm rounded-xl transition-all duration-200 font-medium ';
-  
-  if (!dia.esDelMes) {
-    clases += 'text-gray-300 cursor-not-allowed ';
-  } else if (dia.estaSeleccionado) {
-    clases += 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold shadow-lg transform scale-110 ';
-  } else if (dia.esHoy) {
-    clases += 'bg-teal-100 text-teal-600 font-bold border-2 border-teal-300 shadow-sm ';
-  } else {
-    clases += 'text-gray-700 hover:bg-teal-100 hover:text-teal-700 hover:shadow-sm active:scale-95 ';
+    if (!dia.esDelMes) {
+      clases += 'text-gray-300 cursor-not-allowed ';
+    } else if (dia.estaSeleccionado) {
+      clases += 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold shadow-lg transform scale-110 ';
+    } else if (dia.esHoy) {
+      clases += 'bg-blue-100 text-blue-600 font-bold border-2 border-blue-300 shadow-sm ';
+    } else {
+      clases += 'text-gray-700 hover:bg-blue-100 hover:text-blue-700 hover:shadow-sm active:scale-95 ';
+    }
+
+    return clases;
   }
-  
-  return clases;
-}
-getClaseDiaSlate(dia: DiaCalendario): string {
-  let clases = 'w-10 h-10 text-sm rounded-xl transition-all duration-200 font-medium ';
-  
-  if (!dia.esDelMes) {
-    clases += 'text-gray-300 cursor-not-allowed ';
-  } else if (dia.estaSeleccionado) {
-    clases += 'bg-gradient-to-r from-slate-500 to-gray-600 text-white font-bold shadow-lg transform scale-110 ';
-  } else if (dia.esHoy) {
-    clases += 'bg-slate-100 text-slate-600 font-bold border-2 border-slate-300 shadow-sm ';
-  } else {
-    clases += 'text-gray-700 hover:bg-slate-100 hover:text-slate-700 hover:shadow-sm active:scale-95 ';
+
+  getClaseDiaTeal(dia: DiaCalendario): string {
+    let clases = 'w-10 h-10 text-sm rounded-xl transition-all duration-200 font-medium ';
+
+    if (!dia.esDelMes) {
+      clases += 'text-gray-300 cursor-not-allowed ';
+    } else if (dia.estaSeleccionado) {
+      clases += 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold shadow-lg transform scale-110 ';
+    } else if (dia.esHoy) {
+      clases += 'bg-teal-100 text-teal-600 font-bold border-2 border-teal-300 shadow-sm ';
+    } else {
+      clases += 'text-gray-700 hover:bg-teal-100 hover:text-teal-700 hover:shadow-sm active:scale-95 ';
+    }
+
+    return clases;
   }
-  
-  return clases;
-}
+  getClaseDiaSlate(dia: DiaCalendario): string {
+    let clases = 'w-10 h-10 text-sm rounded-xl transition-all duration-200 font-medium ';
+
+    if (!dia.esDelMes) {
+      clases += 'text-gray-300 cursor-not-allowed ';
+    } else if (dia.estaSeleccionado) {
+      clases += 'bg-gradient-to-r from-slate-500 to-gray-600 text-white font-bold shadow-lg transform scale-110 ';
+    } else if (dia.esHoy) {
+      clases += 'bg-slate-100 text-slate-600 font-bold border-2 border-slate-300 shadow-sm ';
+    } else {
+      clases += 'text-gray-700 hover:bg-slate-100 hover:text-slate-700 hover:shadow-sm active:scale-95 ';
+    }
+
+    return clases;
+  }
   // Método para limpiar proveedor
   limpiarProveedor() {
     this.proveedorSeleccionado = null;
     this.busquedaProveedor = '';
     this.form.get('proveedor')?.setValue(null);
   }
-  generarPDF() {
+  async generarPDF() {
     if (this.form.invalid) {
       this.alerts.warning('Completa los campos requeridos', 'short');
       return;
     }
+
     this.generandoPDF = true;
+
     const rawFecha = this.form.value.fecha;
     const proveedor = this.form.value.proveedor;
 
@@ -291,6 +297,7 @@ getClaseDiaSlate(dia: DiaCalendario): string {
 
     if (!fecha || isNaN(fecha.getTime())) {
       this.alerts.error('Fecha inválida', 'short');
+      this.generandoPDF = false;
       return;
     }
 
@@ -299,24 +306,47 @@ getClaseDiaSlate(dia: DiaCalendario): string {
     const anio = fecha.getFullYear();
     const fechaFormateada = `${mes}/${dia}/${anio}`;
     const fechaCodificada = encodeURIComponent(fechaFormateada);
+    const nombreArchivo = `Pedidos_${anio}-${mes}-${dia}_${proveedor.razonSocial}.pdf`;
 
     this.pedidoService.generarPdfPedidosDelDia(fechaCodificada, proveedor.idProveedor).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Pedidos_${anio}-${mes}-${dia}_${proveedor.razonSocial}.pdf`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-        this.alerts.success('PDF descargado correctamente', 'short');
+      next: async (blob) => {
+        try {
+          const base64Data = await blobToBase64(blob);
+
+          const result: WriteFileResult = await Filesystem.writeFile({
+            path: nombreArchivo,
+            data: base64Data,
+            directory: Directory.Documents
+          });
+
+          this.alerts.success('✅ PDF guardado con éxito', 'short');
+
+          // Abrir el PDF
+          await this.fileOpener.open(result.uri, 'application/pdf');
+        } catch (error) {
+          console.error(error);
+          this.alerts.error('❌ Error al guardar o abrir el PDF', 'short');
+        }
       },
       error: () => {
-        this.alerts.error('No hay pedidos para esta fecha y proveedor', 'short');
+        this.alerts.error('❌ No hay pedidos para esta fecha y proveedor', 'short');
       },
       complete: () => {
-        this.generandoPDF = false; // ⬅️ Volver a habilitar
+        this.generandoPDF = false;
       }
     });
   }
 
+}
+// Utilidad para convertir blob a base64
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onloadend = () => {
+      const base64data = (reader.result as string).split(',')[1];
+      resolve(base64data);
+    };
+    reader.readAsDataURL(blob);
+  });
 }

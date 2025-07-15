@@ -28,6 +28,8 @@ import { ClienteRegisterComponent } from './Template/Cliente/cliente-register-co
 import { ReportesComponent } from './Template/reportes-component/reportes-component';
 import localeEsPE from '@angular/common/locales/es-PE';
 import { ProveedorComponent } from './Template/proveedor-component/proveedor-component';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+
 
 registerLocaleData(localeEsPE);
 @NgModule({
@@ -60,7 +62,7 @@ registerLocaleData(localeEsPE);
     CommonModule
 
   ],
-  providers: [
+  providers: [FileOpener,
     provideBrowserGlobalErrorListeners(),
     {
       provide: HTTP_INTERCEPTORS,
@@ -72,6 +74,7 @@ registerLocaleData(localeEsPE);
       useValue: 'es-PE'
     }
   ],
+  
   bootstrap: [App],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
