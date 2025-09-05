@@ -32,7 +32,7 @@ export class AuthComponent {
     if (val.username && val.password) {
       this.authService.login(val.username, val.password).subscribe({
         next: (response) => {
-          if (val.username == "admin" || val.username == "vendedor") {
+          if (val.username == "admin" || val.username == "vendedor" || val.username=="vendedor2") {
             console.log("User is logged in");
             this.router.navigateByUrl('');
             this.alert.success("Bienvenido", 'short')

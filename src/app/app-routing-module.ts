@@ -11,6 +11,8 @@ import { DetallePedidoComponent } from './Template/Pages/pedidos-component/detal
 import { InventarioComponent } from './Template/Pages/inventario-component/inventario-component';
 import { ReportesComponent } from './Template/reportes-component/reportes-component';
 import { ProveedorComponent } from './Template/proveedor-component/proveedor-component';
+import { NotificacionComponent } from './Template/notificacion-component/notificacion-component';
+import { PerfilComponent } from './Template/Pages/auth-component/perfil-component/perfil-component';
 
 
 const routes: Routes = [
@@ -33,11 +35,12 @@ const routes: Routes = [
       { path: 'inventario', component: InventarioComponent },
       { path: 'reportes', component: ReportesComponent },
       { path: 'proveedor', component: ProveedorComponent },
+      { path: 'Notification', component: NotificacionComponent },
+      { path: 'Perfil', component: PerfilComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },
   { path: 'auth', component: AuthComponent },
-
 
 ];
 

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import * as signalR from '@microsoft/signalr';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
+import { Notificacion } from '../Models/pedidos';
 
 @Injectable({
   providedIn: 'root'
@@ -23,12 +24,12 @@ export class NotificacionService {
   // ✅ Método público para inicializar SignalR (llamar desde ngOnInit)
   public initializeSignalRConnection(): void {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`http://192.168.1.8:5229/hubs/notificaciones`) // ✅ Corregido: notificaciones (plural)
+      .withUrl(`http://192.168.1.3:5229/hubs/notificaciones`) // ✅ Corregido: notificaciones (plural)
       .withAutomaticReconnect()
       .build();
 
     // Escuchar notificaciones desde el servidor
-    this.hubConnection.on('NuevaNotificacion', (data) => {
+    this.hubConnection.on('RecibirNotificacion', (data) => {
       this.notificaciones.unshift(data);
       this.notificacionSubject.next(data);
       this.cantidadSubject.next(this.notificaciones.length);
@@ -57,10 +58,16 @@ export class NotificacionService {
     return this.http.get(`${this.apiurl}`);
   }
 
-  // ✅ Método para marcar notificación como leída
-  public marcarComoLeida(id: number): Observable<any> {
-    return this.http.put(`${this.apiurl}/${id}/leida`, {});
+  marcarComoLeida(notificacion: Notificacion): Observable<any> {
+    return this.http.put(`${this.apiurl}`, notificacion);
   }
+  updateNotificacion(noti: Notificacion): Observable<any> {
+    return this.http.put(`${this.apiurl}`, noti);
+  }
+  getNotificacionById(id: number): Observable<Notificacion> {
+    return this.http.get<Notificacion>(`${this.apiurl}/${id}`);
+  }
+
 
   // ✅ Obtener notificaciones no leídas
   public obtenerNoLeidas(): Observable<any> {
