@@ -1,8 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Auth } from '../../../Service/auth';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { NotificacionService } from '../../../Service/notificacion-service';
 import { AlertService } from '../../../Service/alert-service';
+import { filter, Subscription } from 'rxjs';
+interface ConfigRuta {
+  titulo: string
+  subtitulo: string
+  accion?: string // Propiedad opcional
+}
 
 @Component({
   selector: 'app-home-component',
@@ -10,9 +16,11 @@ import { AlertService } from '../../../Service/alert-service';
   templateUrl: './home-component.html',
   styleUrl: './home-component.css'
 })
+
 export class HomeComponent implements OnInit, OnDestroy {
   isOpen = false;
   mostrarSubmenu = false;
+  mostrarSubmenuProveedor = false;
   isDarkMode = false;
 
   // ✅ Para el componente toast personalizado
@@ -21,7 +29,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   toastTipo: 'success' | 'error' | 'warning' = 'success';
 
   cantidadNotificaciones: number = 0;
+  private routerSubscription!: Subscription;
 
+  // Rutas relacionadas con el submenu de pedidos
+  private rutasPedidos = [
+    '/realizarPedido',
+    '/realizar-pedido',
+    '/pedidos/iniciado',
+    '/pedidos/Recibido',
+    '/pedidos/Cancelado'
+  ];
+  rutasProveedores: string[] = ['/proveedor'];
   constructor(
     private auth: Auth,
     private router: Router,
@@ -36,9 +54,40 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.notiService.cantidadNotificaciones$.subscribe(c => {
       this.cantidadNotificaciones = c;
     });
+    // Escuchar cambios de ruta
+    this.routerSubscription = this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd)
+      )
+      .subscribe((event: NavigationEnd) => {
+        // Verificar si la ruta actual está relacionada con pedidos
+        const rutaActual = event.url;
+        const esRutaDePedidos = this.rutasPedidos.some(ruta =>
+          rutaActual.includes(ruta) || rutaActual.startsWith(ruta)
+        );
+
+        // Si no es una ruta de pedidos, cerrar el submenu
+        if (!esRutaDePedidos) {
+          this.mostrarSubmenu = false;
+        }
+        // --- submenu de proveedores ---
+        const esRutaDeProveedores = this.rutasProveedores.some(ruta =>
+          rutaActual.includes(ruta) || rutaActual.startsWith(ruta)
+        );
+        if (!esRutaDeProveedores) {
+          this.mostrarSubmenuProveedor = false;
+        }
+      });
   }
 
-  verNotificaciones(){}
+  // Método para alternar el submenu (opcional: mantener funcionalidad del click)
+  toggleSubmenu() {
+    this.mostrarSubmenu = !this.mostrarSubmenu;
+  }
+  toggleSubmenuProveedor() {
+    this.mostrarSubmenuProveedor = !this.mostrarSubmenuProveedor;
+  }
+  verNotificaciones() { }
 
   private initializeAlerts(): void {
     this.alertService.alerta$.subscribe(({ mensaje, tipo }) => {
@@ -127,16 +176,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  // // ✅ Reproducir sonido de notificación (opcional)
-  // private reproducirSonidoNotificacion(): void {
-  //   try {
-  //     const audio = new Audio('assets/sounds/notification.mp3');
-  //     audio.volume = 0.3;
-  //     audio.play().catch(e => console.log('No se pudo reproducir sonido:', e));
-  //   } catch (error) {
-  //     console.log('Sonido de notificación no disponible');
-  //   }
-  // }
 
   // ✅ Método para marcar todas las notificaciones como leídas
   marcarTodasComoLeidas(): void {
@@ -182,21 +221,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     return new Intl.DateTimeFormat('es-PE', options).format(date);
   }
 
-  toggleDarkMode(): void {
-    this.isDarkMode = !this.isDarkMode;
-    const html = document.documentElement;
-    if (this.isDarkMode) {
-      html.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      html.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }
-
   ngOnDestroy(): void {
     // Desconectar SignalR al destruir el componente
     this.notiService.disconnect();
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
   }
   mostrarDropdownNotificaciones = false;
   // ✅ Toggle dropdown de notificaciones

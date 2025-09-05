@@ -7,3 +7,12 @@ export interface Pedidos {
     descripcionRecepcion?: string;
     idPersona?: number;
 }
+
+export interface Notificacion {
+  id: number;
+  mensaje: string;
+  fecha: string;
+  tipo: string;
+  idLibro: number;
+  leido: boolean;
+}

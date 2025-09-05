@@ -10,7 +10,7 @@ import { HomeComponent } from './Template/Pages/home-component/home-component';
 import { PedidosComponent } from './Template/Pages/pedidos-component/pedidos-component';
 import { InicioComponent } from './Template/Pages/inicio-component/inicio-component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import { RealizarPedidoComponent } from './Template/Pages/pedidos-component/realizar-pedido-component/realizar-pedido-component';
 import { RegistrarPedidoComponent } from './Template/Pages/pedidos-component/realizar-pedido-component/registrar-pedido-component/registrar-pedido-component';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -29,6 +29,8 @@ import { ReportesComponent } from './Template/reportes-component/reportes-compon
 import localeEsPE from '@angular/common/locales/es-PE';
 import { ProveedorComponent } from './Template/proveedor-component/proveedor-component';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+
+import { PerfilComponent } from './Template/Pages/auth-component/perfil-component/perfil-component';
 
 
 registerLocaleData(localeEsPE);
@@ -49,6 +51,7 @@ registerLocaleData(localeEsPE);
     ClienteRegisterComponent,
     ReportesComponent,
     ProveedorComponent,
+    PerfilComponent,
 
 
   ],
@@ -63,6 +66,7 @@ registerLocaleData(localeEsPE);
 
   ],
   providers: [FileOpener,
+    provideHttpClient(withFetch()),
     provideBrowserGlobalErrorListeners(),
     {
       provide: HTTP_INTERCEPTORS,

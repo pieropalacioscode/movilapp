@@ -68,7 +68,7 @@ export class PedidosProvedorService {
   }
 
   obtenerProveedores(): Observable<any[]> {
-    return this._http.get<any[]>(`http://192.168.1.8:5229/Proveedor`);
+    return this._http.get<any[]>(`http://192.168.1.3:5229/Proveedor`);
   }
 
   generarLinkPdf(fecha: string, idProveedor: number): Observable<{ url: string }> {

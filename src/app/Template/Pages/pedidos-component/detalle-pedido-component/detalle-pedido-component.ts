@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { PedidosProvedorService } from '../../../../Service/pedidos-provedor-service';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { PedidoDetalleLibroResponse } from '../../../../Models/pedidoDetalleRequest';
 import { AlertService } from '../../../../Service/alert-service';
@@ -80,7 +80,11 @@ export class DetallePedidoComponent implements OnInit {
               isbn: d.isbn,
               imagen: d.imagen,
               cantidadPedida: d.cantidadPedida,
-              cantidadRecibida: d.cantidadRecibida,
+              cantidadRecibida: [d.cantidadRecibida, [
+                Validators.required,
+                Validators.min(0),
+                Validators.max(d.cantidadPedida) // 👈 no puede pasar lo pedido
+              ]],
               precioUnitario: d.precioUnitario,
             })
           );
@@ -94,6 +98,18 @@ export class DetallePedidoComponent implements OnInit {
       error: err => console.error('Error al cargar el pedido', err)
     });
   }
+validarCantidad(detalle: FormGroup) {
+  let valor = detalle.get('cantidadRecibida')?.value;
+
+  if (valor < 0) {
+    detalle.get('cantidadRecibida')?.setValue(0); // forza a mínimo 0
+  }
+
+  const max = detalle.get('cantidadPedida')?.value;
+  if (valor > max) {
+    detalle.get('cantidadRecibida')?.setValue(max); // forza al máximo pedido
+  }
+}
 
   get confirmacionValida() {
     return this.pedidoForm.get('descripcionRecepcion')?.valid && this.detalles.valid;
