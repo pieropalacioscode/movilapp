@@ -13,6 +13,13 @@ interface DiaCalendario {
   esDelMes: boolean;
   esHoy: boolean;
   estaSeleccionado: boolean;
+  tienePedido?: boolean;
+}
+
+interface FechaPedidoProveedor {
+  fecha: Date;
+  idProveedor: number;
+  razonSocial: string;
 }
 
 @Component({
@@ -44,6 +51,8 @@ export class ReportesComponent implements OnInit {
   proveedoresFiltrados: any[] = [];
   proveedorSeleccionado: any = null;
   generandoPDF: boolean = false;
+  fechasPedido: FechaPedidoProveedor[] = [];
+
 
   ngOnInit(): void {
     // puedes suscribirte a cambios si necesitas
@@ -54,6 +63,7 @@ export class ReportesComponent implements OnInit {
       this.proveedores = res;
     });
     this.generarCalendario();
+    this.getFechasPedido();
   }
 
   private formatearFecha(fecha: Date): string {
@@ -76,7 +86,8 @@ export class ReportesComponent implements OnInit {
   }
 
   seleccionarProveedor(proveedor: any) {
-    this.form.get('proveedor')?.setValue(proveedor);
+    this.proveedorSeleccionado = proveedor; // ✅ Guardamos el proveedor seleccionado
+    this.form.get('proveedor')?.setValue(proveedor.idProveedor); // mejor guardar el ID en el form
     this.busquedaProveedor = proveedor.razonSocial;
     this.proveedoresFiltrados = [];
   }
@@ -124,7 +135,8 @@ export class ReportesComponent implements OnInit {
         fecha: fecha,
         esDelMes: true,
         esHoy: this.esMismaFecha(fecha, new Date()),
-        estaSeleccionado: this.esMismaFecha(fecha, this.fechaSeleccionada.value)
+        estaSeleccionado: this.esMismaFecha(fecha, this.fechaSeleccionada.value),
+        tienePedido: this.fechasPedido.some(f => this.esMismaFecha(f.fecha, fecha)) // ✅ correcto
       });
     }
 
@@ -147,9 +159,23 @@ export class ReportesComponent implements OnInit {
 
     const fechaFormateada = this.formatearFecha(dia.fecha);
     this.fechaSeleccionada.setValue(fechaFormateada);
-    this.form.get('fecha')?.setValue(fechaFormateada); // ✅ sincroniza con el form
+    this.form.get('fecha')?.setValue(fechaFormateada);
     this.generarCalendario();
+
+    // 🔎 Buscar proveedor correspondiente
+    const match = this.fechasPedido.find(f =>
+      f.fecha.toDateString() === dia.fecha.toDateString()
+    );
+
+    if (match) {
+      this.proveedorSeleccionado = match;
+      this.form.get('proveedor')?.setValue(match);
+    } else {
+      this.proveedorSeleccionado = null;
+      this.form.get('proveedor')?.setValue(null);
+    }
   }
+
 
   mesAnterior() {
     this.mesActual = new Date(this.mesActual.getFullYear(), this.mesActual.getMonth() - 1, 1);
@@ -180,8 +206,11 @@ export class ReportesComponent implements OnInit {
   seleccionarHoy() {
     const hoy = new Date();
     const fechaFormateada = this.formatearFecha(hoy);
+
     this.fechaSeleccionada.setValue(fechaFormateada);
-    this.form.get('fecha')?.setValue(fechaFormateada); // ✅
+    this.form.get('fecha')?.setValue(fechaFormateada);
+
+    this.mesActual = new Date(hoy.getFullYear(), hoy.getMonth(), 1); // 🔑 cambia mes
     this.generarCalendario();
   }
 
@@ -189,17 +218,31 @@ export class ReportesComponent implements OnInit {
     const ayer = new Date();
     ayer.setDate(ayer.getDate() - 1);
     const fechaFormateada = this.formatearFecha(ayer);
+
     this.fechaSeleccionada.setValue(fechaFormateada);
-    this.form.get('fecha')?.setValue(fechaFormateada); // ✅
+    this.form.get('fecha')?.setValue(fechaFormateada);
+
+    this.mesActual = new Date(ayer.getFullYear(), ayer.getMonth(), 1); // 🔑 cambia mes
     this.generarCalendario();
   }
 
+
   seleccionarSemanaAnterior() {
-    const semanaAnterior = new Date();
-    semanaAnterior.setDate(semanaAnterior.getDate() - 7);
+    // Punto de inicio: fecha seleccionada o la de hoy
+    const base = this.fechaSeleccionada.value
+      ? new Date(this.fechaSeleccionada.value)
+      : new Date();
+
+    // Restar 7 días
+    const semanaAnterior = new Date(base);
+    semanaAnterior.setDate(base.getDate() - 7);
+
+    // Guardar selección y recalcular calendario
     this.fechaSeleccionada.setValue(this.formatearFecha(semanaAnterior));
+    this.mesActual = new Date(semanaAnterior.getFullYear(), semanaAnterior.getMonth(), 1); // ✅ actualiza el mes
     this.generarCalendario();
   }
+
 
   private esMismaFecha(fecha1: Date, fecha2: Date | string | null): boolean {
     if (!fecha1 || !fecha2) return false;
@@ -268,6 +311,8 @@ export class ReportesComponent implements OnInit {
       clases += 'bg-gradient-to-r from-slate-500 to-gray-600 text-white font-bold shadow-lg transform scale-110 ';
     } else if (dia.esHoy) {
       clases += 'bg-slate-100 text-slate-600 font-bold border-2 border-slate-300 shadow-sm ';
+    } else if (dia.tienePedido) { // ✅ día con pedido
+      clases += 'bg-green-600 text-green-800 font-bold border-2 border-green-600 shadow-sm ';
     } else {
       clases += 'text-gray-700 hover:bg-slate-100 hover:text-slate-700 hover:shadow-sm active:scale-95 ';
     }
@@ -337,6 +382,21 @@ export class ReportesComponent implements OnInit {
     });
   }
 
+  getFechasPedido() {
+    this.pedidoService.getFechasPedido().subscribe({
+      next: (res) => {
+        this.fechasPedido = res.map((f: any) => ({
+          fecha: new Date(f.fecha),
+          idProveedor: f.idProveedor,
+          razonSocial: f.razonSocial
+        }));
+        this.generarCalendario(); // 🔄 recalcular calendario con marcas
+      },
+      error: () => {
+        console.error('Error al obtener fechas de pedidos');
+      }
+    });
+  }
 }
 // Utilidad para convertir blob a base64
 function blobToBase64(blob: Blob): Promise<string> {
@@ -349,4 +409,5 @@ function blobToBase64(blob: Blob): Promise<string> {
     };
     reader.readAsDataURL(blob);
   });
+
 }

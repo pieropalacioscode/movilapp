@@ -3,6 +3,8 @@ import { PedidosProvedorService } from '../../../Service/pedidos-provedor-servic
 import { Pedidos } from '../../../Models/pedidos';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PedidoDetalleLibroResponse } from '../../../Models/pedidoDetalleRequest';
+import { Directory, Filesystem, WriteFileResult } from '@capacitor/filesystem';
+import { AlertService } from '../../../Service/alert-service';
 
 @Component({
   selector: 'app-pedidos-component',
@@ -13,8 +15,10 @@ import { PedidoDetalleLibroResponse } from '../../../Models/pedidoDetalleRequest
 export class PedidosComponent implements OnInit {
   estadoFiltro: string = '';
   pedidos: PedidoDetalleLibroResponse[] = [];
+  fileOpener: any;
   constructor(
     private _pedidoService: PedidosProvedorService,
+    private alerts: AlertService,
     private route: ActivatedRoute
   ) { }
 
@@ -87,5 +91,67 @@ export class PedidosComponent implements OnInit {
 
     return paginas;
   }
+  generandoPDF: boolean = false;
+  async generarPDF(idProveedor: number, fecha: string) {
+    this.generandoPDF = true;
+
+    // Convertir string a Date
+    const fechaObj = new Date(fecha);
+
+    if (!fechaObj || isNaN(fechaObj.getTime())) {
+      this.alerts.error('Fecha inválida', 'short');
+      this.generandoPDF = false;
+      return;
+    }
+
+    const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+    const dia = String(fechaObj.getDate()).padStart(2, '0');
+    const anio = fechaObj.getFullYear();
+    const fechaFormateada = `${mes}/${dia}/${anio}`;
+    const fechaCodificada = encodeURIComponent(fechaFormateada);
+
+    const nombreArchivo = `Pedidos_${anio}-${mes}-${dia}_Proveedor${idProveedor}.pdf`;
+
+    this._pedidoService.generarPdfPedidosDelDia(fechaCodificada, idProveedor).subscribe({
+      next: async (blob) => {
+        try {
+          const base64Data = await blobToBase64(blob);
+
+          const result: WriteFileResult = await Filesystem.writeFile({
+            path: nombreArchivo,
+            data: base64Data,
+            directory: Directory.Documents
+          });
+
+          this.alerts.success('✅ PDF guardado con éxito', 'short');
+          await this.fileOpener.open(result.uri, 'application/pdf');
+        } catch (error) {
+          console.error(error);
+          this.alerts.error('❌ Error al guardar o abrir el PDF', 'short');
+        }
+      },
+      error: () => {
+        this.alerts.error('❌ No hay pedidos para esta fecha y proveedor', 'short');
+      },
+      complete: () => {
+        this.generandoPDF = false;
+      }
+    });
+  }
+
+
+
+}
+// Utilidad para convertir blob a base64
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onloadend = () => {
+      const base64data = (reader.result as string).split(',')[1];
+      resolve(base64data);
+    };
+    reader.readAsDataURL(blob);
+  });
 
 }

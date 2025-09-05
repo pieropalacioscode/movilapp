@@ -80,4 +80,7 @@ export class PedidosProvedorService {
     return this._http.get<{ url: string }>(`${this.apiurl}/pdf-link-firebase`, { params });
   }
 
+  getFechasPedido():Observable<any>{
+    return this._http.get<any>(`${this.apiurl}/fechas`)
+  }
 }

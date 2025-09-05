@@ -9,7 +9,7 @@ import { HomeComponent } from './Template/Pages/home-component/home-component';
 
 import { PedidosComponent } from './Template/Pages/pedidos-component/pedidos-component';
 import { InicioComponent } from './Template/Pages/inicio-component/inicio-component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import { RealizarPedidoComponent } from './Template/Pages/pedidos-component/realizar-pedido-component/realizar-pedido-component';
 import { RegistrarPedidoComponent } from './Template/Pages/pedidos-component/realizar-pedido-component/registrar-pedido-component/registrar-pedido-component';
@@ -52,6 +52,7 @@ registerLocaleData(localeEsPE);
     ReportesComponent,
     ProveedorComponent,
     PerfilComponent,
+    
 
 
   ],
@@ -62,7 +63,8 @@ registerLocaleData(localeEsPE);
     HttpClientModule,
     NgSelectModule,
     BrowserAnimationsModule,
-    CommonModule
+    CommonModule,
+    FormsModule
 
   ],
   providers: [FileOpener,

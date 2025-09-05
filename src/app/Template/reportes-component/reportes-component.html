@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gradient-to-br from-gray-50 to-slate-100 p-4">
-  
+
   <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm mx-auto overflow-hidden">
-    
+
     <!-- Header slate -->
     <div class="bg-gradient-to-r from-slate-700 to-gray-800 p-6 text-white">
       <div class="flex items-center gap-4">
@@ -19,32 +19,31 @@
     </div>
 
     <div class="p-6 space-y-6">
-      
+
       <!-- Selector de Proveedor -->
       <form [formGroup]="form">
         <div class="space-y-3">
           <label class="block text-sm font-bold text-gray-700">
             🏢 Seleccionar Proveedor
           </label>
-          
+
           <div class="relative">
-            <input type="text" 
-              [value]="busquedaProveedor" 
-              (input)="onProveedorInput($event)"
+            <input type="text" [value]="busquedaProveedor" (input)="onProveedorInput($event)"
               placeholder="Buscar proveedor..."
               class="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-all text-base" />
-            
+
             <div class="absolute right-4 top-1/2 transform -translate-y-1/2">
               <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
           </div>
 
-          <div *ngIf="busquedaProveedor && proveedoresFiltrados.length > 0" 
-            class="relative">
-            <ul class="absolute z-10 w-full bg-white border-2 border-gray-200 rounded-2xl shadow-xl max-h-48 overflow-y-auto">
-              <li *ngFor="let proveedor of proveedoresFiltrados; let i = index" 
+          <div *ngIf="busquedaProveedor && proveedoresFiltrados.length > 0" class="relative">
+            <ul
+              class="absolute z-10 w-full bg-white border-2 border-gray-200 rounded-2xl shadow-xl max-h-48 overflow-y-auto">
+              <li *ngFor="let proveedor of proveedoresFiltrados; let i = index"
                 (click)="seleccionarProveedor(proveedor)"
                 class="px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0"
                 [class.bg-slate-50]="i === 0">
@@ -58,49 +57,81 @@
             </ul>
           </div>
 
-          <div *ngIf="proveedorSeleccionado" 
-            class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-4 border border-green-200">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          <div *ngIf="proveedorSeleccionado"
+            class="bg-gradient-to-r from-green-50 via-emerald-50 to-green-100 rounded-2xl p-5 border border-green-200 shadow-sm">
+
+            <div class="flex items-center gap-4">
+              <!-- Icono -->
+              <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-green-200/70 shadow-inner">
+                <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
+
+              <!-- Texto -->
               <div class="flex-1">
-                <p class="font-bold text-green-800 text-sm">Proveedor seleccionado</p>
-                <p class="text-green-700 text-sm">{{ proveedorSeleccionado.razonSocial }}</p>
+                <p class="text-xs font-semibold uppercase tracking-wide text-green-600">
+                  Proveedor seleccionado
+                </p>
+                <p class="text-lg font-bold text-gray-800">
+                  {{ proveedorSeleccionado.razonSocial }}
+                </p>
               </div>
-              <button (click)="limpiarProveedor()" 
-                class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+
+              <!-- Botón limpiar -->
+              <button (click)="limpiarProveedor()"
+                class="p-2 rounded-full text-green-600 hover:bg-green-200/70 hover:text-green-800 transition-all duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
           </div>
-
           <input type="hidden" formControlName="proveedor" />
         </div>
       </form>
+      <!-- Leyenda de colores del calendario -->
+      <div class="w-full bg-white shadow-md rounded-2xl p-4 mt-4">
+        <h3 class="text-sm font-semibold text-gray-700 mb-3">Leyenda</h3>
+
+        <div class="flex flex-col space-y-3">
+          <!-- Pedido registrado -->
+          <div class="flex items-center gap-3">
+            <span class="w-4 h-4 rounded-full bg-green-600 shadow"></span>
+            <span class="text-sm text-gray-700">Pedido registrado</span>
+          </div>
+
+          <!-- Hoy -->
+          <div class="flex items-center gap-3">
+            <span class="w-4 h-4 rounded-full from-slate-500 to-gray-600 bg-slate-500 shadow"></span>
+            <span class="text-sm text-gray-700">Hoy</span>
+          </div>
+
+          <!-- Sin pedidos -->
+          <div class="flex items-center gap-3">
+            <span class="w-4 h-4 rounded-full bg-gray-400 shadow"></span>
+            <span class="text-sm text-gray-700">Sin pedidos</span>
+          </div>
+        </div>
+      </div>
+
 
       <!-- Calendario -->
       <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 border border-gray-200">
-        
+
         <div class="flex items-center justify-between mb-4">
-          <button (click)="mesAnterior()" 
-            class="p-3 hover:bg-white rounded-xl transition-colors shadow-sm">
+          <button (click)="mesAnterior()" class="p-3 hover:bg-white rounded-xl transition-colors shadow-sm">
             <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          
+
           <div class="text-center">
             <h4 class="font-bold text-gray-800 text-lg">{{ mesActual | date:'MMM yyyy' | titlecase }}</h4>
             <p class="text-xs text-gray-500">Toca una fecha</p>
           </div>
-          
-          <button (click)="mesSiguiente()" 
-            class="p-3 hover:bg-white rounded-xl transition-colors shadow-sm">
+
+          <button (click)="mesSiguiente()" class="p-3 hover:bg-white rounded-xl transition-colors shadow-sm">
             <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
@@ -108,18 +139,14 @@
         </div>
 
         <div class="grid grid-cols-7 gap-1 mb-3">
-          <div *ngFor="let dia of diasSemana" 
-            class="text-center text-xs font-bold text-gray-500 py-2">
+          <div *ngFor="let dia of diasSemana" class="text-center text-xs font-bold text-gray-500 py-2">
             {{ dia }}
           </div>
         </div>
 
         <div class="grid grid-cols-7 gap-1">
-          <button *ngFor="let dia of diasMes" 
-            (click)="seleccionarFecha(dia)" 
-            [class]="getClaseDiaSlate(dia)"
-            [disabled]="!dia.esDelMes"
-            class="touch-manipulation">
+          <button *ngFor="let dia of diasMes" (click)="seleccionarFecha(dia)" [class]="getClaseDiaSlate(dia)"
+            [disabled]="!dia.esDelMes" class="touch-manipulation">
             {{ dia.numero }}
           </button>
         </div>
@@ -152,7 +179,8 @@
           </div>
           <div class="flex-1">
             <p class="font-bold text-slate-800">Fecha confirmada</p>
-            <p class="text-slate-700 font-medium">{{ fechaSeleccionada.value | date:'EEEE, dd \'de\' MMMM' | titlecase }}</p>
+            <p class="text-slate-700 font-medium">{{ fechaSeleccionada.value | date:'EEEE, dd \'de\' MMMM' | titlecase
+              }}</p>
           </div>
         </div>
       </div>
@@ -160,24 +188,23 @@
 
     <!-- Botón principal slate -->
     <div class="sticky bottom-0 bg-white p-6 border-t border-gray-100">
-      <button (click)="generarPDF()" 
-        [disabled]="!fechaSeleccionada.value || generandoPDF"
+      <button (click)="generarPDF()" [disabled]="!fechaSeleccionada.value || generandoPDF"
         class="w-full bg-gradient-to-r from-slate-700 to-gray-800 hover:from-slate-800 hover:to-gray-900 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white px-6 py-5 rounded-2xl font-bold text-lg transition-all duration-200 transform active:scale-95 shadow-xl flex items-center justify-center gap-3 touch-manipulation">
-        
+
         <ng-container *ngIf="!generandoPDF; else cargando">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           <span>Generar PDF</span>
-          <span *ngIf="fechaSeleccionada.value" 
-            class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">
+          <span *ngIf="fechaSeleccionada.value" class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">
             {{ fechaSeleccionada.value | date:'dd/MM' }}
           </span>
         </ng-container>
-        
+
         <ng-template #cargando>
-          <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"></path>
           </svg>

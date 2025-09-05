@@ -3,6 +3,8 @@ import { LibroService } from '../../../Service/libro-service';
 import { Inventario } from '../../../Models/inventario';
 import { PaginacionResponse } from '../../../Models/PaginacionResponse';
 import { debounceTime, distinctUntilChanged, of, Subject, switchMap } from 'rxjs';
+import { KardexService } from '../../../Service/kardex-service';
+import { AlertService } from '../../../Service/alert-service';
 
 @Component({
   selector: 'app-inventario-component',
@@ -12,17 +14,17 @@ import { debounceTime, distinctUntilChanged, of, Subject, switchMap } from 'rxjs
 })
 export class InventarioComponent implements OnInit {
   constructor(
-    private libroService: LibroService
+    private libroService: LibroService,
+    private kardexService: KardexService,
+    private alerts: AlertService
   ) { }
-
-
 
   inventario: Inventario[] = [];
   inventarioOriginal: Inventario[] = [];
 
   paginaActual = 1;
   totalPaginas = 0;
-
+  editando: boolean = false;
   // Propiedades de búsqueda
   searchQuery: string = '';
   quickFilter: string = '';
@@ -198,6 +200,23 @@ export class InventarioComponent implements OnInit {
   onSearchInput(event: any) {
     this.searchQuery = event.target.value;
     this.onSearchChange();
+  }
+
+  iniciarEdicion(libro: any) {
+    libro.stockTemp = libro.stock; // inicializa el input con el valor actual
+    libro.editando = true;
+  }
+
+  updateStock(idLibro: number, stock: number) {
+    this.kardexService.updateStock(idLibro, stock).subscribe({
+      next: () => { this.alerts.success('Stock actualizado ✅'), this.getInventario() },
+      error: () => this.alerts.error('Error al actualizar stock ❌')
+    });
+  }
+  cancelarEdicion(libro: any, event: Event) {
+    event.stopPropagation(); // evita abrir detalles
+    libro.stockTemp = libro.stock; // restaurar el valor original
+    libro.editando = false;        // cerrar modo edición
   }
 
 }

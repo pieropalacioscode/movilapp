@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <!-- 🔍 BUSCADOR MODERNO -->
+    <!-- Buscador moderno -->
     <div class="mb-6">
         <div class="relative max-w-md mx-auto">
             <!-- Input de búsqueda -->
@@ -56,7 +56,7 @@
     <div class="space-y-4">
         <div *ngFor="let libro of inventarioFiltrado; let i = index"
             class="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 relative overflow-hidden"
-            [class.scale-[1.02]="isExpanded(i)">
+            [class.scale-[1.02]]="isExpanded(i)">
 
             <!-- Barra superior decorativa con color según stock -->
             <div class="absolute top-0 left-0 right-0 h-1" [ngClass]="{
@@ -84,67 +84,92 @@
                     </div>
                 </div>
 
-                <!-- STOCK PROMINENTE - Diseño limpio -->
                 <div class="mb-4">
                     <div class="flex items-center justify-between p-4 rounded-xl border-2" [ngClass]="{
-                        'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200': libro.stock > 10,
-                        'bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200': libro.stock > 0 && libro.stock <= 10,
-                        'bg-gradient-to-r from-red-50 to-pink-50 border-red-200': libro.stock === 0
-                    }">
-                        <!-- Lado izquierdo: Icono y label -->
+      'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200': libro.stock > 10,
+      'bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200': libro.stock > 0 && libro.stock <= 10,
+      'bg-gradient-to-r from-red-50 to-pink-50 border-red-200': libro.stock === 0
+  }">
+                        <!-- Lado izquierdo -->
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-xl flex items-center justify-center" [ngClass]="{
-                                'bg-green-100': libro.stock > 10,
-                                'bg-orange-100': libro.stock > 0 && libro.stock <= 10,
-                                'bg-red-100': libro.stock === 0
-                            }">
+          'bg-green-100': libro.stock > 10,
+          'bg-orange-100': libro.stock > 0 && libro.stock <= 10,
+          'bg-red-100': libro.stock === 0
+      }">
                                 <svg class="w-5 h-5" [ngClass]="{
-                                    'text-green-600': libro.stock > 10,
-                                    'text-orange-600': libro.stock > 0 && libro.stock <= 10,
-                                    'text-red-600': libro.stock === 0
-                                }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            'text-green-600': libro.stock > 10,
+            'text-orange-600': libro.stock > 0 && libro.stock <= 10,
+            'text-red-600': libro.stock === 0
+        }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                                 </svg>
                             </div>
                             <div>
                                 <p class="text-xs font-bold uppercase tracking-wide" [ngClass]="{
-                                    'text-green-700': libro.stock > 10,
-                                    'text-orange-700': libro.stock > 0 && libro.stock <= 10,
-                                    'text-red-700': libro.stock === 0
-                                }">STOCK DISPONIBLE</p>
+            'text-green-700': libro.stock > 10,
+            'text-orange-700': libro.stock > 0 && libro.stock <= 10,
+            'text-red-700': libro.stock === 0
+        }">STOCK DISPONIBLE</p>
                                 <div class="flex items-center gap-2 mt-1">
                                     <div class="w-2 h-2 rounded-full animate-pulse" [ngClass]="{
-                                        'bg-green-500': libro.stock > 10,
-                                        'bg-orange-500': libro.stock > 0 && libro.stock <= 10,
-                                        'bg-red-500': libro.stock === 0
-                                    }"></div>
+              'bg-green-500': libro.stock > 10,
+              'bg-orange-500': libro.stock > 0 && libro.stock <= 10,
+              'bg-red-500': libro.stock === 0
+          }"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Lado derecho: Número y estado -->
+                        <!-- Lado derecho -->
                         <div class="text-right">
                             <div class="flex items-center gap-2">
-                                <span class="text-2xl font-black" [ngClass]="{
-                                    'text-green-600': libro.stock > 10,
-                                    'text-orange-600': libro.stock > 0 && libro.stock <= 10,
-                                    'text-red-600': libro.stock === 0
-                                }">
+                                <!-- Mostrar stock -->
+                                <span *ngIf="!libro.editando" class="text-2xl font-black cursor-pointer hover:underline"
+                                    [ngClass]="{
+            'text-green-600': libro.stock > 10,
+            'text-orange-600': libro.stock > 0 && libro.stock <= 10,
+            'text-red-600': libro.stock === 0
+          }">
                                     {{ libro.stock }}
                                 </span>
-                                <span class="text-sm font-semibold text-gray-600">unidades</span>
+
+                                <!-- Botón editar -->
+                                <button *ngIf="!libro.editando"
+                                    (click)="libro.editando = true; $event.stopPropagation();iniciarEdicion(libro)"
+                                    class="px-3 py-1 text-xs font-bold rounded-lg bg-blue-500 hover:bg-gray-300 transition">
+                                    Editar
+                                </button>
+
+                                <!-- Input editable + cancelar -->
+                                <div *ngIf="libro.editando " class="flex items-center gap-2">
+                                    <input type="number" [ngModel]="libro.stockTemp"
+                                        (ngModelChange)="libro.stockTemp = $event"
+                                        (keyup.enter)="updateStock(libro.idLibro, libro.stockTemp)"
+                                        (click)="$event.stopPropagation()"
+                                        class="w-20 text-2xl font-black text-center border-b border-gray-400 focus:border-emerald-500 focus:ring-0" />
+
+
+                                    <!-- Botón cancelar (al lado del input) -->
+                                    <button (click)="cancelarEdicion(libro, $event)"
+                                        class="w-6 h-6 flex items-center justify-center text-white bg-red-500 hover:bg-red-600 rounded-full shadow-md">
+                                        ✕
+                                    </button>
+                                </div>
                             </div>
+
                             <span class="inline-block mt-1 px-2 py-1 rounded-full text-xs font-bold" [ngClass]="{
-                                'bg-green-100 text-green-800': libro.stock > 10,
-                                'bg-orange-100 text-orange-800': libro.stock > 0 && libro.stock <= 10,
-                                'bg-red-100 text-red-800': libro.stock === 0
-                            }">
+          'bg-green-100 text-green-800': libro.stock > 10,
+          'bg-orange-100 text-orange-800': libro.stock > 0 && libro.stock <= 10,
+          'bg-red-100 text-red-800': libro.stock === 0
+      }">
                                 {{ libro.stock > 10 ? 'STOCK ALTO' : libro.stock > 0 ? 'STOCK BAJO' : 'AGOTADO' }}
                             </span>
                         </div>
                     </div>
                 </div>
+
 
                 <!-- Información secundaria cuando está colapsado -->
                 <div *ngIf="!isExpanded(i)" class="space-y-3">
@@ -201,7 +226,7 @@
                 </div>
             </div>
 
-            <!-- Contenido expandible - SIN REDUNDANCIA DE STOCK -->
+            <!-- Contenido expandible -->
             <div *ngIf="isExpanded(i)" class="px-5 pb-5 space-y-4 animate-fadeIn">
 
                 <!-- Sección: Información Bibliográfica Completa -->
@@ -217,21 +242,28 @@
                         <h3 class="text-sm font-bold text-indigo-800">📚 Información Bibliográfica</h3>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-3">
+                    <div class="grid grid-cols-2 gap-3">
                         <!-- ISBN Completo -->
-                        <div class="bg-white rounded-lg p-3">
+                        <div class="bg-white rounded-lg p-3 col-span-2 sm:col-span-1">
                             <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wide block mb-1">ISBN
                                 Completo</span>
-                            <span class="text-sm font-mono text-gray-800 break-all"
-                                [innerHTML]="highlightSearchTerm(libro.isbn)"></span>
+                            <span class="text-sm text-gray-800" [innerHTML]="highlightSearchTerm(libro.isbn)"></span>
                         </div>
 
-                        <!-- Subcategoría -->
+                        <!-- Categoría -->
                         <div class="bg-white rounded-lg p-3">
                             <span
                                 class="text-xs font-semibold text-indigo-600 uppercase tracking-wide block mb-1">Categoría</span>
                             <span class="text-sm text-gray-800"
                                 [innerHTML]="highlightSearchTerm(libro.subcategoria || 'No especificada')"></span>
+                        </div>
+
+                        <!-- Proveedor -->
+                        <div class="bg-white rounded-lg p-3">
+                            <span
+                                class="text-xs font-semibold text-indigo-600 uppercase tracking-wide block mb-1">Proveedor</span>
+                            <span class="text-sm font-mono text-gray-800 break-all"
+                                [innerHTML]="highlightSearchTerm(libro.proveedor || 'No especificado')"></span>
                         </div>
                     </div>
                 </div>
@@ -257,36 +289,7 @@
                     </div>
                 </div>
 
-                <!-- Sección: Distribución y Logística -->
-                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-100">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                                </path>
-                            </svg>
-                        </div>
-                        <h3 class="text-sm font-bold text-blue-800">🚚 Distribución</h3>
-                    </div>
-
-                    <div class="bg-white rounded-lg p-3">
-                        <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide block mb-1">Proveedor
-                            Principal</span>
-                        <div class="flex items-start gap-2">
-                            <svg class="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                                </path>
-                            </svg>
-                            <p class="text-sm text-gray-800 leading-relaxed break-words"
-                                [innerHTML]="highlightSearchTerm(libro.proveedor || 'No especificado')"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sección: Gestión de Inventario (NUEVA - Sin redundancia) -->
+                <!-- Sección: Gestión de Inventario -->
                 <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100">
                     <div class="flex items-center gap-2 mb-3">
                         <div class="w-6 h-6 bg-emerald-100 rounded-lg flex items-center justify-center">
@@ -393,7 +396,7 @@
         </button>
     </div>
 
-    <!-- 🌐 Paginador Moderno para Móvil -->
+    <!-- Paginador moderno para móvil -->
     <div *ngIf="totalPaginas > 1" class="flex justify-center items-center flex-wrap gap-2 mt-8">
 
         <!-- Botón Anterior -->
@@ -427,6 +430,5 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
         </button>
-
     </div>
 </div>
